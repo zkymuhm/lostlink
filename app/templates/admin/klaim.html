@@ -1,7 +1,54 @@
 {% extends "base_admin.html" %}
+{% from "_macros.html" import badge, foto, judul, flash_box %}
 {% block title %}Persetujuan klaim · LOSTLINK Admin{% endblock %}
 {% block content %}
-<h1 class="h3 fw-bold">Persetujuan klaim</h1>
-<p class="ll-muted">Masuk sebagai admin: {{ user.nama }} ({{ user.email }}).</p>
-<div class="ll-card p-4"><p class="mb-0 ll-muted">Tabel klaim dikerjakan di WBS 4.4.</p></div>
+<h1 class="h3 fw-bold mb-1">Persetujuan klaim</h1>
+<p class="ll-muted">Bandingkan ciri khusus dari penemu dengan jawaban pemilik, lalu setujui atau tolak pengembalian.</p>
+{{ flash_box(flash) }}
+<div class="d-flex gap-2 mb-3">
+  <a class="ll-pill {% if status == 'menunggu' %}active{% endif %}" href="?status=menunggu">Menunggu keputusan</a>
+  <a class="ll-pill {% if status != 'menunggu' %}active{% endif %}" href="?status=selesai">Sudah diputuskan</a>
+</div>
+<div class="row g-4">
+  <div class="col-xl-7">
+    <div class="ll-card overflow-hidden">
+      <table class="table table-ll">
+        <thead><tr><th class="ps-3">Barang</th><th>Pengklaim</th><th>Kemiripan</th><th>{% if status == 'menunggu' %}Verifikasi{% else %}Keputusan{% endif %}</th></tr></thead>
+        <tbody>
+        {% for r in rows %}
+        <tr style="cursor:pointer" onclick="location='?status={{ status }}&id={{ r.v.id }}'" {% if pilih and pilih.v.id == r.v.id %}class="table-active"{% endif %}>
+          <td class="ps-3 fw-semibold">{{ judul(r.lost) }}</td><td>{{ r.pengklaim.nama }}</td><td>{{ '%.0f' % (r.m.skor * 100) }}%</td>
+          <td>{% if r.v.keputusan_admin %}{{ badge(r.v.keputusan_admin|capitalize) }}{% else %}{{ badge('Diverifikasi') }}{% endif %}</td></tr>
+        {% else %}
+        <tr><td colspan="4" class="ps-3 ll-muted">Tidak ada klaim {{ 'yang menunggu' if status == 'menunggu' else 'yang sudah diputuskan' }}.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-xl-5">
+    {% if pilih %}
+    <div class="ll-card p-4">
+      <h2 class="h5 fw-bold">Detail klaim: {{ judul(pilih.lost) }}</h2>
+      <div class="row g-2 my-3">
+        <div class="col-6">{{ foto(pilih.lost, 140) }}<div class="ll-muted small mt-1">Foto laporan hilang</div></div>
+        <div class="col-6">{{ foto(pilih.found, 140) }}<div class="ll-muted small mt-1">Foto barang temuan</div></div>
+      </div>
+      <div class="ll-muted small">Ciri khusus (penemu)</div><div class="fw-semibold mb-2">{{ pilih.found.ciri_khusus }}</div>
+      <div class="ll-muted small">Ciri khusus (laporan pemilik)</div><div class="fw-semibold mb-2">{{ pilih.lost.ciri_khusus }}</div>
+      <div class="ll-muted small">Jawaban pemilik saat klaim</div><div class="fw-semibold mb-2">{{ pilih.v.jawaban_ciri }}</div>
+      <div class="ll-muted small">Pengklaim</div><div class="fw-semibold mb-3">{{ pilih.pengklaim.nama }} ({{ pilih.pengklaim.email }})</div>
+      {% if not pilih.v.keputusan_admin %}
+      <div class="d-flex gap-2">
+        <form class="flex-fill" method="post" action="/admin/klaim/{{ pilih.v.id }}/tolak"><button class="btn btn-ll-outline w-100">Tolak</button></form>
+        <form class="flex-fill" method="post" action="/admin/klaim/{{ pilih.v.id }}/setujui"><button class="btn btn-ll w-100">Setujui pengembalian</button></form>
+      </div>
+      <p class="ll-muted small mt-2 mb-0">Setelah disetujui, status barang berubah menjadi Dikembalikan dan kontak penemu dibuka untuk pemilik.</p>
+      {% else %}
+      <div class="ll-secret small">Diputuskan: <strong>{{ pilih.v.keputusan_admin }}</strong> ({{ pilih.v.hasil }}) pada {{ pilih.v.diputuskan_pada.strftime('%d %b %Y, %H.%M') }}.</div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

@@ -1,13 +1,49 @@
 {% extends "base.html" %}
+{% from "_macros.html" import badge, foto, judul, kartu, tgl %}
 {% block title %}Beranda · LOSTLINK{% endblock %}
 {% block content %}
-<div class="ll-hero d-flex justify-content-between align-items-center mb-4">
-  <div>
-    <h1 class="h3 fw-bold">Halo, {{ user.nama }}</h1>
-    <p class="ll-muted mb-0">Kehilangan atau menemukan barang? Unggah fotonya. LOSTLINK mencocokkan barang hilang dan barang temuan berdasarkan kemiripan foto.</p>
+<div class="ll-hero d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+  <div style="max-width:560px">
+    <h1 class="h3 fw-bold">Kehilangan atau menemukan barang?</h1>
+    <p class="ll-muted mb-0">Unggah fotonya. LOSTLINK mencocokkan barang hilang dan barang temuan berdasarkan kemiripan foto, lalu pemilik memverifikasi ciri khususnya.</p>
+  </div>
+  <div class="d-flex gap-3">
+    <a href="/lapor?jenis=hilang" class="ll-card ll-card-link p-3" style="width:170px"><div class="ll-logo mb-3" style="background:#E3E3E3;border:1px solid #C6C6C6"></div><div class="fw-semibold">Lapor barang hilang</div><div class="ll-muted small">Untuk pemilik barang</div></a>
+    <a href="/lapor?jenis=temuan" class="ll-card ll-card-link p-3" style="width:170px"><div class="ll-logo mb-3" style="background:#E3E3E3;border:1px solid #C6C6C6"></div><div class="fw-semibold">Lapor barang temuan</div><div class="ll-muted small">Untuk penemu barang</div></a>
   </div>
 </div>
-<div class="ll-card p-4">
-  <p class="mb-0 ll-muted">Fitur lapor barang (WBS 4.2), pencarian (4.3), dan rekomendasi (5.3) sedang dikembangkan.</p>
+
+<form class="ll-card p-3 mb-4 row g-3 align-items-end mx-0" action="/laporan" method="get">
+  <div class="col-md-6"><label class="form-label">Cari barang</label><input class="form-control" name="q" placeholder="Contoh: ransel hitam, dompet cokelat"></div>
+  <div class="col-md-2"><label class="form-label">Kategori</label><select class="form-select form-control" name="kategori"><option value="">Semua</option>{% for k in kategori_list %}<option>{{ k }}</option>{% endfor %}</select></div>
+  <div class="col-md-2"><label class="form-label">Lokasi</label><input class="form-control" name="lokasi" placeholder="Semua lokasi"></div>
+  <div class="col-md-2"><button class="btn btn-ll w-100">Cari</button></div>
+</form>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="ll-card p-4 h-100">
+      <div class="d-flex justify-content-between mb-3"><h2 class="h5 fw-bold mb-0">Laporan saya</h2><a href="/saya" class="small fw-semibold text-dark">Lihat semua</a></div>
+      {% for it in saya %}
+      <a href="/laporan/{{ it.id }}" class="ll-card ll-card-link d-flex align-items-center gap-3 p-2 mb-2">
+        <img src="/foto/{{ it.path_foto }}" class="ll-thumb" alt="">
+        <div class="flex-grow-1"><div class="fw-semibold">{{ judul(it) }}</div><div class="ll-muted small">{{ it.jenis|capitalize }} · {{ it.lokasi }} · {{ tgl(it.waktu_kejadian) }}</div></div>
+        {{ badge(it.status) }}<span class="small fw-semibold px-3">Lihat</span>
+      </a>
+      {% else %}
+      <p class="ll-muted mb-0">Belum ada laporan. Mulai dengan melaporkan barang hilang atau temuan.</p>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="ll-card p-4 h-100">
+      <h2 class="h5 fw-bold mb-3">Barang temuan terbaru</h2>
+      <div class="row g-3">
+        {% for it in temuan %}
+        <div class="col-6"><a href="/laporan/{{ it.id }}" class="ll-card-link">{{ foto(it, 90) }}<div class="fw-semibold small mt-1 text-truncate">{{ judul(it) }}</div><div class="ll-muted" style="font-size:11px">{{ it.lokasi }} · {{ it.waktu_kejadian.strftime('%d %b') }}</div></a></div>
+        {% else %}<p class="ll-muted mb-0">Belum ada barang temuan.</p>{% endfor %}
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

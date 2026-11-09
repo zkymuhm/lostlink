@@ -1,0 +1,26 @@
+{% macro badge(status) -%}
+<span class="ll-badge {% if status in ('Dikembalikan',) %}dark{% endif %}">{{ status }}</span>
+{%- endmacro %}
+
+{% macro foto(item, h=150, cls="") -%}
+<img src="/foto/{{ item.path_foto }}" alt="Foto {{ item.kategori }}" class="ll-foto {{ cls }}" style="height:{{ h }}px" loading="lazy">
+{%- endmacro %}
+
+{% macro judul(item) -%}{{ item.deskripsi.split('.')[0][:40] }}{%- endmacro %}
+
+{% macro tgl(dt) -%}{{ dt.strftime('%d %b %Y') if dt else '—' }}{%- endmacro %}
+
+{% macro kartu(item) -%}
+<a class="ll-card ll-card-link p-2 h-100" href="/laporan/{{ item.id }}">
+  {{ foto(item, 150) }}
+  <div class="px-2 pt-2 pb-1">
+    <div class="fw-semibold text-truncate">{{ judul(item) }}</div>
+    <div class="ll-muted small">{{ item.jenis|capitalize }} · {{ item.lokasi }} · {{ item.waktu_kejadian.strftime('%d %b') }}</div>
+    <div class="d-flex justify-content-between align-items-center mt-2">{{ badge(item.status) }}<span class="small fw-semibold">Lihat</span></div>
+  </div>
+</a>
+{%- endmacro %}
+
+{% macro flash_box(flash) -%}
+{% if flash %}<div class="alert alert-secondary py-2">{{ flash }}</div>{% endif %}
+{%- endmacro %}

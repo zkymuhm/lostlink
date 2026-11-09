@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, judul, tgl %}
+{% block title %}Status laporan · LOSTLINK{% endblock %}
+{% block content %}
+<h1 class="h3 fw-bold mb-1">Status laporan</h1>
+<p class="ll-muted">Semua laporan Anda beserta tahap statusnya: Hilang → Ditemukan → Diverifikasi → Dikembalikan.</p>
+<div class="ll-card overflow-hidden">
+<table class="table table-ll">
+  <thead><tr><th class="ps-4">Foto</th><th>Barang</th><th>Jenis</th><th>Lokasi</th><th>Waktu</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for it in items %}
+  <tr><td class="ps-4"><img src="/foto/{{ it.path_foto }}" class="ll-thumb" alt=""></td><td class="fw-semibold">{{ judul(it) }}</td><td>{{ it.jenis|capitalize }}</td><td>{{ it.lokasi }}</td><td>{{ tgl(it.waktu_kejadian) }}</td><td>{{ badge(it.status) }}</td>
+    <td class="text-end pe-4">{% if it.jenis == 'hilang' and it.status == 'Hilang' %}<a class="btn btn-sm btn-ll me-1" href="/rekomendasi/{{ it.id }}">Rekomendasi</a>{% endif %}<a class="btn btn-sm btn-ll-outline" href="/laporan/{{ it.id }}">Detail</a></td></tr>
+  {% else %}
+  <tr><td colspan="7" class="ps-4 ll-muted">Belum ada laporan. <a href="/lapor" class="text-dark fw-semibold">Lapor barang</a></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

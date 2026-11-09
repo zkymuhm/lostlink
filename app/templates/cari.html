@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "_macros.html" import kartu %}
+{% block title %}Hasil pencarian · LOSTLINK{% endblock %}
+{% block content %}
+<a href="/" class="small fw-medium text-dark text-decoration-none">← Kembali ke beranda</a>
+<h1 class="h3 fw-bold mt-2 mb-1">Hasil pencarian</h1>
+<p class="ll-muted">Cari laporan barang hilang dan temuan berdasarkan kata kunci, kategori, lokasi, dan waktu.</p>
+<form class="ll-card p-3 mb-4 row g-3 align-items-end mx-0" method="get" action="/laporan">
+  <input type="hidden" name="jenis" value="{{ f.jenis }}">
+  <div class="col-md-4"><label class="form-label">Cari barang</label><input class="form-control" name="q" value="{{ f.q }}" placeholder="Contoh: ransel hitam"></div>
+  <div class="col-md-2"><label class="form-label">Kategori</label><select class="form-select form-control" name="kategori"><option value="">Semua</option>{% for k in kategori_list %}<option {% if f.kategori == k %}selected{% endif %}>{{ k }}</option>{% endfor %}</select></div>
+  <div class="col-md-2"><label class="form-label">Lokasi</label><input class="form-control" name="lokasi" value="{{ f.lokasi }}" placeholder="Semua lokasi"></div>
+  <div class="col-md-3"><label class="form-label">Waktu (dari – sampai)</label><div class="d-flex gap-1"><input class="form-control" type="date" name="dari" value="{{ f.dari }}"><input class="form-control" type="date" name="sampai" value="{{ f.sampai }}"></div></div>
+  <div class="col-md-1"><button class="btn btn-ll w-100">Cari</button></div>
+</form>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="fw-semibold">{{ items|length }} barang ditemukan · urut terbaru</div>
+  <div class="d-flex gap-2">
+    {% for val, lbl in [("", "Semua"), ("hilang", "Hilang"), ("temuan", "Temuan")] %}
+    <a class="ll-pill {% if f.jenis == val %}active{% endif %}" href="/laporan?q={{ f.q|urlencode }}&kategori={{ f.kategori|urlencode }}&lokasi={{ f.lokasi|urlencode }}&dari={{ f.dari }}&sampai={{ f.sampai }}&jenis={{ val }}">{{ lbl }}</a>
+    {% endfor %}
+  </div>
+</div>
+<div class="row g-4">
+  {% for it in items %}<div class="col-sm-6 col-lg-3">{{ kartu(it) }}</div>
+  {% else %}<p class="ll-muted">Tidak ada laporan yang cocok dengan filter ini.</p>{% endfor %}
+</div>
+{% endblock %}

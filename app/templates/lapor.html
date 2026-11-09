@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Lapor barang · LOSTLINK{% endblock %}
+{% block content %}
+<a href="/" class="small fw-medium text-dark text-decoration-none">← Kembali ke beranda</a>
+<h1 class="h3 fw-bold mt-2 mb-1">Lapor barang</h1>
+<p class="ll-muted">Isi data selengkap mungkin. Foto akan dipakai untuk mencari barang yang mirip.</p>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <form class="ll-card p-4" method="post" action="/laporan" enctype="multipart/form-data" novalidate>
+      {% if errors %}<div class="alert alert-danger py-2"><ul class="mb-0 ps-3">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+      <label class="form-label">Jenis laporan</label>
+      <div class="row g-3 mb-3">
+        {% for val, lbl in [("hilang", "Barang hilang"), ("temuan", "Barang temuan")] %}
+        <div class="col"><label class="ll-card d-flex align-items-center gap-2 p-3 fw-semibold" style="cursor:pointer">
+          <input class="form-check-input m-0" type="radio" name="jenis" value="{{ val }}" {% if form.jenis == val %}checked{% endif %}> {{ lbl }}</label></div>
+        {% endfor %}
+      </div>
+      <label class="form-label">Foto barang</label>
+      <div class="ll-drop mb-3">
+        <input class="form-control" type="file" name="foto" accept="image/*" required>
+        <div class="ll-muted small mt-2">JPG, PNG, WEBP, atau HEIC, maksimal 5 MB. Satu barang per foto.</div>
+      </div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6"><label class="form-label">Kategori</label>
+          <select class="form-select form-control" name="kategori"><option value="">Pilih kategori ▾</option>
+            {% for k in kategori_list %}<option {% if form.kategori == k %}selected{% endif %}>{{ k }}</option>{% endfor %}</select></div>
+        <div class="col-md-6"><label class="form-label">Perkiraan waktu</label><input class="form-control" type="datetime-local" name="waktu" value="{{ form.waktu or '' }}"></div>
+      </div>
+      <div class="mb-3"><label class="form-label">Lokasi terakhir / lokasi temuan</label><input class="form-control" name="lokasi" value="{{ form.lokasi or '' }}" placeholder="Contoh: Perpustakaan, lantai 2"></div>
+      <div class="mb-3"><label class="form-label">Ciri-ciri umum</label><textarea class="form-control" name="deskripsi" rows="3" placeholder="Contoh: Ransel hitam, dua kantong depan, ada gantungan kunci.">{{ form.deskripsi or '' }}</textarea></div>
+      <div class="ll-secret mb-4">
+        <div class="fw-semibold small">Ciri khusus (rahasia)</div>
+        <div class="ll-muted small mb-2">Tidak ditampilkan ke publik. Dipakai untuk memverifikasi pemilik sebelum kontak dibuka.</div>
+        <input class="form-control" name="ciri_khusus" value="{{ form.ciri_khusus or '' }}" placeholder="Contoh: ada stiker di bagian dalam">
+      </div>
+      <div class="d-flex justify-content-end gap-2"><a href="/" class="btn btn-ll-outline">Batal</a><button class="btn btn-ll">Kirim laporan</button></div>
+    </form>
+  </div>
+  <div class="col-lg-4">
+    <div class="ll-card p-4 mb-3"><h2 class="h6 fw-bold">Tips foto agar mudah dicocokkan</h2>
+      <ul class="small mb-0 ps-3"><li>Foto seluruh barang, jangan terpotong.</li><li>Gunakan cahaya yang cukup, hindari bayangan.</li><li>Latar polos membantu sistem mengenali bentuk.</li><li>Satu barang per foto, jangan sambil dipegang.</li></ul></div>
+    <div class="ll-card p-4" style="background:#ECECEC"><h2 class="h6 fw-bold">Apa yang terjadi setelah ini?</h2>
+      <p class="small ll-muted mb-0">Sistem mengubah foto menjadi data fitur dan membandingkannya dengan laporan lain. Lima barang paling mirip akan muncul di halaman Rekomendasi.</p></div>
+  </div>
+</div>
+{% endblock %}

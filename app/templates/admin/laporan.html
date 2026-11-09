@@ -1,0 +1,27 @@
+{% extends "base_admin.html" %}
+{% from "_macros.html" import badge, judul, flash_box %}
+{% block title %}Semua laporan · LOSTLINK Admin{% endblock %}
+{% block content %}
+<h1 class="h3 fw-bold mb-1">Semua laporan</h1>
+<p class="ll-muted">Kelola seluruh laporan barang hilang dan temuan. Hapus laporan palsu atau ganda.</p>
+{{ flash_box(flash) }}
+<form class="d-flex gap-2 mb-3" method="get">
+  <input class="form-control" style="max-width:380px" name="q" value="{{ f.q }}" placeholder="Cari nama barang, pelapor, atau lokasi">
+  <select class="form-select form-control" style="max-width:170px" name="jenis"><option value="">Jenis: semua</option>{% for j in ['hilang', 'temuan'] %}<option value="{{ j }}" {% if f.jenis == j %}selected{% endif %}>{{ j|capitalize }}</option>{% endfor %}</select>
+  <select class="form-select form-control" style="max-width:190px" name="status"><option value="">Status: semua</option>{% for s in ['Hilang', 'Ditemukan', 'Diverifikasi', 'Dikembalikan'] %}<option {% if f.status == s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select>
+  <button class="btn btn-ll">Terapkan</button>
+</form>
+<div class="ll-card overflow-hidden">
+<table class="table table-ll">
+  <thead><tr><th class="ps-3">Foto</th><th>Barang</th><th>Jenis</th><th>Pelapor</th><th>Lokasi</th><th>Status</th><th class="text-end pe-3">Aksi</th></tr></thead>
+  <tbody>
+  {% for it, u in rows %}
+  <tr><td class="ps-3"><img src="/foto/{{ it.path_foto }}" class="ll-thumb" style="width:40px;height:40px" alt=""></td><td class="fw-semibold">{{ judul(it) }}</td><td>{{ it.jenis|capitalize }}</td><td>{{ u.nama }}</td><td>{{ it.lokasi }}</td><td>{{ badge(it.status) }}</td>
+    <td class="text-end pe-3"><a class="btn btn-sm btn-ll-outline" href="/laporan/{{ it.id }}">Lihat</a>
+      <form class="d-inline" method="post" action="/admin/laporan/{{ it.id }}/hapus" onsubmit="return confirm('Hapus laporan ini?')"><button class="btn btn-sm btn-ll">Hapus</button></form></td></tr>
+  {% else %}<tr><td colspan="7" class="ps-3 ll-muted">Tidak ada laporan.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="ll-muted small mt-2 text-end">Menampilkan {{ rows|length }} dari {{ total }} laporan</p>
+{% endblock %}

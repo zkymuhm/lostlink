@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, foto, judul, tgl, flash_box %}
+{% block title %}Rekomendasi · LOSTLINK{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-3">
+    <div class="ll-card p-3">
+      <div class="ll-label mb-2">Laporan Anda</div>
+      {{ foto(item, 200) }}
+      <div class="h5 fw-bold mt-3 mb-1">{{ judul(item) }}</div>
+      <div class="ll-muted small">{{ item.kategori }} · {{ item.lokasi }}<br>Hilang {{ item.waktu_kejadian.strftime('%d %b %Y, %H.%M') }}</div>
+      <div class="my-2">{{ badge(item.status) }}</div>
+      <div class="ll-secret small">Skor menunjukkan kemiripan tampilan foto, bukan kepastian bahwa barang itu milik Anda. Ajukan klaim, lalu jawab pertanyaan ciri khusus.</div>
+    </div>
+  </div>
+  <div class="col-lg-9">
+    {{ flash_box(flash) }}
+    <h1 class="h4 fw-bold mb-1">{{ kandidat|length }} barang temuan paling mirip</h1>
+    <p class="ll-muted small mb-3">
+      {% if semua %}Semua kategori dan waktu. <a class="text-dark fw-semibold" href="?semua=0">Terapkan filter</a>
+      {% else %}Difilter: kategori {{ item.kategori }}, ditemukan setelah {{ tgl(item.waktu_kejadian) }}. <a class="text-dark fw-semibold" href="?semua=1">Tampilkan semua kategori</a>{% endif %}
+      · dihitung dalam {{ '%.3f' % durasi }} detik
+    </p>
+    {% if pending %}<div class="alert alert-secondary py-2">Klaim Anda sedang diverifikasi admin. <a href="/laporan/{{ item.id }}" class="text-dark fw-semibold">Lihat status</a></div>{% endif %}
+    {% for k in kandidat %}
+    <div class="ll-card d-flex align-items-center gap-3 p-3 mb-2">
+      <div class="ll-rank">{{ k.rank }}</div>
+      <img src="/foto/{{ k.item.path_foto }}" class="ll-thumb" style="width:64px;height:64px" alt="">
+      <div class="flex-grow-1"><div class="fw-semibold">{{ judul(k.item) }}</div><div class="ll-muted small">{{ k.item.lokasi }} · ditemukan {{ k.item.waktu_kejadian.strftime('%d %b') }}</div></div>
+      <div style="width:200px"><div class="d-flex justify-content-between small"><span class="ll-muted">Tingkat kemiripan</span><strong>{{ '%.0f' % (k.skor * 100) }}%</strong></div><div class="ll-bar mt-1"><div style="width:{{ [k.skor * 100, 0]|max }}%"></div></div></div>
+      {% if item.status == 'Hilang' and k.item.status == 'Ditemukan' %}<a class="btn btn-ll-outline" href="?semua={{ semua }}&klaim={{ k.match.id }}#klaim">Ajukan klaim</a>
+      {% else %}{{ badge(k.item.status) }}{% endif %}
+    </div>
+    {% else %}
+    <div class="ll-card p-4 ll-muted">Belum ada barang temuan yang cocok{% if not semua %} pada kategori ini. Coba <a class="text-dark fw-semibold" href="?semua=1">tampilkan semua kategori</a>{% endif %}.</div>
+    {% endfor %}
+
+    {% if pilih and item.status == 'Hilang' %}
+    <form id="klaim" class="ll-card p-4 mt-4" style="border:1.5px solid #3B3B3B" method="post" action="/klaim">
+      <h2 class="h5 fw-bold">Verifikasi klaim: {{ judul(pilih.item) }} (#{{ pilih.rank }})</h2>
+      <p class="ll-muted small">Penemu menyimpan satu ciri khusus. Sebutkan ciri khusus barang Anda yang tidak terlihat di foto (misalnya isi, stiker, goresan, atau tulisan).</p>
+      {% if error %}<div class="alert alert-danger py-2">{{ error }}</div>{% endif %}
+      <input type="hidden" name="match_id" value="{{ pilih.match.id }}">
+      <textarea class="form-control mb-3" name="jawaban_ciri" rows="2" placeholder="Tulis jawaban Anda"></textarea>
+      <div class="d-flex justify-content-end gap-2"><a class="btn btn-ll-outline" href="?semua={{ semua }}">Batal</a><button class="btn btn-ll">Kirim jawaban</button></div>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

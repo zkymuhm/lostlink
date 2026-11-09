@@ -1,22 +1,34 @@
 """Aplikasi FastAPI LOSTLINK. Jalankan: uvicorn app.main:app --reload"""
 import os
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 from starlette.middleware.sessions import SessionMiddleware
 
-from .auth import LoginRequired, current_user, require_admin
-from .database import Base, engine
-from .models import User
-from .routers import auth
+from . import matching
+from .auth import LoginRequired, current_user
+from .config import UPLOAD_DIR
+from .database import Base, engine, get_db
+from .models import Item, User
+from .routers import admin, auth, klaim, laporan
 from .templating import templates
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="LOSTLINK")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    matching.siapkan_model()  # muat ResNet18 sekali saat server dinyalakan
+    yield
+
+
+app = FastAPI(title="LOSTLINK", lifespan=lifespan)
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("LOSTLINK_SECRET", "ganti-dengan-teks-acak-panjang"),
@@ -24,7 +36,11 @@ app.add_middleware(
     max_age=60 * 60 * 8,  # sesi 8 jam
 )
 app.mount("/static", StaticFiles(directory=str(Path(__file__).parent / "static")), name="static")
+app.mount("/foto", StaticFiles(directory=str(UPLOAD_DIR)), name="foto")
 app.include_router(auth.router)
+app.include_router(laporan.router)
+app.include_router(klaim.router)
+app.include_router(admin.router)
 
 
 @app.exception_handler(LoginRequired)
@@ -40,13 +56,11 @@ async def http_error(request: Request, exc: HTTPException):
 
 
 @app.get("/")
-def beranda(request: Request, user: User = Depends(current_user)):
+def beranda(request: Request, user: User = Depends(current_user), db: Session = Depends(get_db)):
     if user.peran == "admin":
         return RedirectResponse("/admin/klaim", status_code=303)
-    return templates.TemplateResponse(request, "beranda.html", {"user": user, "aktif": "Beranda"})
-
-
-@app.get("/admin/klaim")
-def admin_klaim(request: Request, user: User = Depends(require_admin)):
-    # Isi tabel klaim dikerjakan di WBS 4.4; halaman ini sementara membuktikan hak akses admin.
-    return templates.TemplateResponse(request, "admin/klaim.html", {"user": user, "aktif": "Persetujuan klaim"})
+    saya = db.scalars(select(Item).where(Item.user_id == user.id).order_by(Item.dibuat_pada.desc()).limit(5)).all()
+    temuan = db.scalars(select(Item).where(Item.jenis == "temuan").order_by(Item.dibuat_pada.desc()).limit(4)).all()
+    return templates.TemplateResponse(request, "beranda.html", {
+        "user": user, "saya": saya, "temuan": temuan, "aktif": "Beranda",
+        "kategori_list": ("Tas", "Dompet", "Ponsel", "Kunci", "Lainnya")})

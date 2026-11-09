@@ -12,7 +12,7 @@
 <nav class="ll-nav d-flex align-items-center px-4">
   <a class="ll-brand d-flex align-items-center gap-2" href="/"><span class="ll-logo"></span>LOSTLINK</a>
   <div class="mx-auto d-flex gap-2">
-    {% for label, url in [("Beranda", "/"), ("Lapor barang", "/lapor"), ("Rekomendasi", "#"), ("Status laporan", "#")] %}
+    {% for label, url in [("Beranda", "/"), ("Lapor barang", "/lapor"), ("Rekomendasi", "/rekomendasi"), ("Status laporan", "/saya")] %}
       <a class="nav-link {% if aktif == label %}active{% endif %}" href="{{ url }}">{{ label }}</a>
     {% endfor %}
   </div>

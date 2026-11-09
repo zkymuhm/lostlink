@@ -1,16 +1,10 @@
 """Test case WBS 4.1: registrasi, login, hak akses peran (KF-01, KF-02, KNF-04, KF-14)."""
-import os
+from fastapi.testclient import TestClient
 
-os.environ["DATABASE_URL"] = "sqlite:///./test_lostlink.db"
-if os.path.exists("test_lostlink.db"):
-    os.remove("test_lostlink.db")
-
-from fastapi.testclient import TestClient  # noqa: E402
-
-from app.database import SessionLocal  # noqa: E402
-from app.main import app  # noqa: E402
-from app.models import User  # noqa: E402
-from app.seed_admin import main as seed_admin  # noqa: E402
+from app.database import SessionLocal
+from app.main import app
+from app.models import User
+from app.seed_admin import main as seed_admin
 
 DATA = {"nama": "Alivia", "email": "alivia@test.id", "no_kontak": "081234567890",
         "password": "rahasia123", "password2": "rahasia123", "setuju": "1"}

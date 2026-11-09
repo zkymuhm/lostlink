@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, foto, judul, tgl, flash_box %}
+{% block title %}{{ judul(item) }} · LOSTLINK{% endblock %}
+{% block content %}
+{% set urutan = ['Hilang', 'Ditemukan', 'Diverifikasi', 'Dikembalikan'] %}
+{% set posisi = urutan.index(item.status) %}
+<a href="/saya" class="small fw-medium text-dark text-decoration-none">← Kembali ke status laporan</a>
+<div class="d-flex align-items-center gap-3 mt-2"><h1 class="h3 fw-bold mb-0">{{ judul(item) }}</h1>{{ badge(item.status) }}</div>
+<p class="ll-muted">Laporan barang {{ item.jenis }} · dibuat {{ tgl(item.dibuat_pada) }} · ID #{{ '%04d' % item.id }}</p>
+{{ flash_box(flash) }}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="ll-card p-4">
+      <div class="ll-label mb-2">Data barang</div>
+      {{ foto(item, 300) }}
+      {% for k, v in [('Kategori', item.kategori), ('Lokasi', item.lokasi), ('Perkiraan waktu', item.waktu_kejadian.strftime('%d %b %Y, %H.%M')), ('Ciri-ciri umum', item.deskripsi)] %}
+      <div class="mt-3"><div class="ll-muted small">{{ k }}</div><div class="fw-medium">{{ v }}</div></div>
+      {% endfor %}
+      <div class="ll-secret small mt-3">Ciri khusus dan nomor kontak tidak ditampilkan di halaman ini. Ciri khusus hanya dipakai admin untuk memverifikasi klaim.</div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="ll-card p-4 mb-4">
+      <h2 class="h5 fw-bold mb-1">Status barang</h2>
+      <p class="ll-muted small">Pelacakan 4 tahap: Hilang → Ditemukan → Diverifikasi → Dikembalikan</p>
+      <div class="ll-steps my-4">
+        {% for s in urutan %}
+        {% set kelas = 'done' if loop.index0 < posisi or item.status == 'Dikembalikan' else ('now' if loop.index0 == posisi else 'next') %}
+        <div class="ll-step {{ kelas }}"><div class="dot">{% if kelas == 'done' %}✓{% else %}{{ loop.index }}{% endif %}</div><div class="name">{{ s }}</div></div>
+        {% endfor %}
+      </div>
+      <hr>
+      <div class="fw-semibold mb-2">Riwayat</div>
+      {% for waktu, teks in riwayat %}
+      <div class="d-flex gap-3 small mb-2"><span class="ll-muted" style="width:150px">{{ waktu.strftime('%d %b %Y, %H.%M') if waktu else '' }}</span><span class="fw-medium">{{ teks }}</span></div>
+      {% endfor %}
+      {% if milik_saya and item.jenis == 'hilang' and item.status == 'Hilang' %}
+      <a href="/rekomendasi/{{ item.id }}" class="btn btn-ll mt-3">Lihat rekomendasi</a>
+      {% endif %}
+    </div>
+    {% if milik_saya and item.jenis == 'hilang' %}
+    <div class="ll-card p-4">
+      <h2 class="h5 fw-bold">Kontak penemu</h2>
+      {% if kontak %}
+      <div class="ll-secret"><div class="fw-semibold">{{ kontak.nama }}</div><div>WhatsApp: <strong>{{ kontak.no_kontak }}</strong></div><div class="ll-muted small">Barang ditemukan di {{ kontak.lokasi }}. Hubungi penemu untuk mengambil barang.</div></div>
+      {% else %}
+      <div class="ll-secret d-flex gap-3 align-items-center" style="border-style:dashed"><div class="ll-logo" style="width:36px;height:36px;background:#D4D4D4"></div><div><div class="fw-semibold">Terkunci</div><div class="ll-muted small">Nomor kontak penemu dibuka setelah admin menyetujui pengembalian.</div></div></div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
