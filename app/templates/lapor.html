@@ -30,7 +30,7 @@
         <div class="col-md-6"><label class="form-label" for="kategori">2. Kategori</label>
           <select class="form-select" id="kategori" name="kategori"><option value="">Pilih kategori</option>
             {% for k in kategori_list %}<option {% if form.kategori == k %}selected{% endif %}>{{ k }}</option>{% endfor %}</select></div>
-        <div class="col-md-6"><label class="form-label" for="lokasi">3. Lokasi terakhir</label><input class="form-control" id="lokasi" name="lokasi" value="{{ form.lokasi or '' }}" placeholder="Contoh: Perpustakaan lantai 2"></div>
+        <div class="col-md-6"><label class="form-label" for="lokasi">3. Lokasi terakhir</label><input class="form-control" id="lokasi" name="lokasi" value="{{ form.lokasi or '' }}" placeholder="Contoh: Stasiun Malang, ruang tunggu"></div>
       </div>
       <div id="ciri-wrap" class="ll-secret kunci mb-4" {% if not temuan %}hidden{% endif %}>
         <label class="form-label mb-1" for="ciri_temuan"><i class="bi bi-lock-fill" style="color:var(--verif)"></i> 4. Satu ciri khusus (rahasia)</label>

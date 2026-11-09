@@ -40,7 +40,7 @@ def register(
     if not nama:
         errors.append("Nama lengkapnya belum diisi.")
     if not EMAIL_RE.match(email):
-        errors.append("Format email belum tepat, contohnya nama@student.uin-malang.ac.id.")
+        errors.append("Format email belum tepat, contohnya nama@email.com.")
     elif db.scalar(select(User).where(User.email == email)):
         errors.append("Email ini sudah terdaftar. Coba masuk saja.")
     if not re.fullmatch(r"[0-9+ ]{8,20}", no_kontak):

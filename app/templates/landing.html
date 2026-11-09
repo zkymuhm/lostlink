@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% block title %}LOSTLINK · Temukan barang hilang di kampus lewat foto{% endblock %}
+{% block title %}LOSTLINK · Temukan barang hilang lewat foto{% endblock %}
 {% block bodyclass %}{% endblock %}
 {% block body %}
 <div class="container-xxl px-3 px-md-4">
   <nav class="ll-landing-nav">
-    <span class="ll-brand d-flex align-items-center gap-2"><span class="ll-logo"><i class="bi bi-link-45deg"></i></span>LOSTLINK</span>
+    <a href="/" class="d-inline-flex" aria-label="LOSTLINK"><img src="/static/img/logo.svg" alt="LOSTLINK" height="38"></a>
     <div class="d-flex gap-2"><a class="btn btn-ll-outline" href="/login">Masuk</a><a class="btn btn-ll d-none d-sm-inline-block" href="/register">Daftar</a></div>
   </nav>
 
   <section class="ll-landing-hero row g-5 align-items-center">
     <div class="col-lg-6">
-      <h1 class="mb-3">Barang hilang di kampus? Cari lewat fotonya.</h1>
+      <h1 class="mb-3">Kehilangan barang? Cari lewat fotonya.</h1>
       <p class="lead mb-4">Unggah foto barangmu. LOSTLINK menunjukkan barang temuan yang paling mirip dalam hitungan detik, lalu admin memastikan barang kembali ke pemilik yang benar.</p>
       <div class="d-flex flex-wrap gap-2">
         <a class="btn btn-ll btn-lg" href="/register"><i class="bi bi-search-heart"></i> Laporkan barang hilang</a>
@@ -21,9 +21,9 @@
     <div class="col-lg-6">
       <div class="ll-hero-card">
         <div class="fw-bold mb-3">5 barang temuan paling mirip</div>
-        {% for nama, tempat, skor, warna in [("Dompet kulit hitam lipat", "Gedung B", 91, "#3A3530"), ("Dompet anyaman hitam", "Gedung A", 78, "#55504A"), ("Dompet Levi's cokelat", "Parkiran motor", 64, "#8A5A36")] %}
+        {% for nama, tempat, skor, ikon, jenis in [("Dompet kulit hitam lipat", "Stasiun Malang", 91, "wallet2", "dompet"), ("Tas selempang hitam", "Food court mal", 78, "handbag", "tas"), ("Gantungan kunci karabiner", "Parkiran minimarket", 64, "key", "kunci")] %}
         <div class="mini">
-          <span class="ph" style="background:{{ warna }}"></span>
+          <span class="ll-ikon {{ jenis }}"><i class="bi bi-{{ ikon }}"></i></span>
           <div class="flex-grow-1"><div class="fw-bold small">{{ nama }}</div><div class="ll-muted" style="font-size:12px"><i class="bi bi-geo-alt"></i> {{ tempat }}</div>
             <div class="ll-bar mt-1"><div style="width:{{ skor }}%"></div></div></div>
           <strong class="small">{{ skor }}%</strong>
@@ -37,9 +37,9 @@
   <section class="mb-5">
     <h2 class="h3 mb-4">Cara kerjanya</h2>
     <div class="row g-4 ll-langkah">
-      <div class="col-md-4 item"><div class="ll-card p-4 h-100"><span class="no"></span><h3 class="h5">Foto dan laporkan</h3><p class="ll-muted mb-0">Cukup foto, kategori, dan lokasi terakhir. Detail lain bisa dilengkapi nanti.</p></div></div>
-      <div class="col-md-4 item"><div class="ll-card p-4 h-100"><span class="no"></span><h3 class="h5">Lihat yang paling mirip</h3><p class="ll-muted mb-0">Sistem membandingkan fotomu dengan semua barang temuan dan menampilkan 5 yang paling mirip.</p></div></div>
-      <div class="col-md-4 item"><div class="ll-card p-4 h-100"><span class="no"></span><h3 class="h5">Buktikan, lalu ambil</h3><p class="ll-muted mb-0">Sebutkan ciri khusus barangmu. Setelah admin menyetujui, kontak penemu dibuka untukmu.</p></div></div>
+      <div class="col-md-4 item"><div class="ll-card p-4 h-100"><div class="d-flex justify-content-between align-items-start"><span class="no"></span><i class="bi bi-camera fs-3" style="color:var(--indigo)"></i></div><h3 class="h5">Foto dan laporkan</h3><p class="ll-muted mb-0">Cukup foto, kategori, dan lokasi terakhir. Detail lain bisa dilengkapi nanti.</p></div></div>
+      <div class="col-md-4 item"><div class="ll-card p-4 h-100"><div class="d-flex justify-content-between align-items-start"><span class="no"></span><i class="bi bi-stars fs-3" style="color:var(--indigo)"></i></div><h3 class="h5">Lihat yang paling mirip</h3><p class="ll-muted mb-0">Sistem membandingkan fotomu dengan semua barang temuan dan menampilkan 5 yang paling mirip.</p></div></div>
+      <div class="col-md-4 item"><div class="ll-card p-4 h-100"><div class="d-flex justify-content-between align-items-start"><span class="no"></span><i class="bi bi-shield-check fs-3" style="color:var(--indigo)"></i></div><h3 class="h5">Buktikan, lalu ambil</h3><p class="ll-muted mb-0">Sebutkan ciri khusus barangmu. Setelah admin menyetujui, kontak penemu dibuka untukmu.</p></div></div>
     </div>
   </section>
 

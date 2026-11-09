@@ -78,7 +78,7 @@ async def kirim_laporan(
     if kategori not in KATEGORI:
         errors.append("Pilih kategori yang paling mendekati. Kalau ragu, pilih Lainnya.")
     if not form["lokasi"]:
-        errors.append("Tulis perkiraan lokasinya, misalnya Perpustakaan lantai 2.")
+        errors.append("Tulis perkiraan lokasinya, misalnya Stasiun Malang, ruang tunggu.")
     if jenis == "temuan" and len(form["ciri_khusus"]) < 3:
         errors.append("Tulis satu ciri khusus yang hanya diketahui pemiliknya, supaya barang tidak diklaim orang yang salah.")
     waktu_dt = _baca_waktu(waktu, errors)
@@ -138,7 +138,7 @@ def ubah(item_id: int, request: Request, kategori: str = Form(""), deskripsi: st
     if kategori not in KATEGORI:
         errors.append("Pilih kategori yang paling mendekati. Kalau ragu, pilih Lainnya.")
     if not form["lokasi"]:
-        errors.append("Tulis perkiraan lokasinya, misalnya Perpustakaan lantai 2.")
+        errors.append("Tulis perkiraan lokasinya, misalnya Stasiun Malang, ruang tunggu.")
     if item.jenis == "temuan" and len(form["ciri_khusus"]) < 3:
         errors.append("Barang temuan perlu satu ciri khusus untuk verifikasi pemilik.")
     waktu_dt = _baca_waktu(waktu, errors)

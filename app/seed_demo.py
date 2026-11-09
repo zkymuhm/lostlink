@@ -22,7 +22,7 @@ from .database import Base, SessionLocal, engine
 from .models import Item, Match, User, Verification
 
 DATA = ROOT / "uji_kelayakan" / "data"
-LOKASI = ["Perpustakaan pusat", "Gedung A", "Gedung B", "Kantin", "Masjid Ulul Albab", "Lab komputer", "Parkiran motor"]
+LOKASI = ["Stasiun Malang", "Terminal Arjosari", "Food court mal", "Kafe dekat alun-alun", "Masjid Agung", "Kantor kecamatan", "Parkiran minimarket"]
 
 # id: (deskripsi, kategori, ciri khusus)
 BARANG = {
@@ -35,8 +35,8 @@ BARANG = {
     "07": ("Cat akrilik V-TEC 12 warna", "Lainnya", "warna putih sudah habis"),
     "08": ("Sepatu Adidas biru muda", "Lainnya", "ada inisial A di lidah sepatu"),
     "09": ("Gantungan kunci mobil biru", "Kunci", "ring gantungan sedikit bengkok"),
-    "10": ("Dompet kulit hitam lipat", "Dompet", "ada KTM UIN atas nama Alivia"),
-    "11": ("Lanyard HIMATIF dengan ID card", "Lainnya", "ID card nomor 240605110073"),
+    "10": ("Dompet kulit hitam lipat", "Dompet", "ada KTP atas nama Alivia"),
+    "11": ("Lanyard dengan ID card kantor", "Lainnya", "ID card nomor 240605110073"),
     "12": ("Parfum botol hitam", "Lainnya", "isi tinggal setengah"),
     "13": ("Rubik 3x3", "Lainnya", "stiker kuning sudah pudar"),
     "14": ("Deodoran roll-on Rexona", "Lainnya", "tutup ada retak"),
@@ -140,7 +140,7 @@ def main():
                 lost.status = found.status = "Diverifikasi"
             db.add(v)
 
-        klaim("10", "di dalamnya ada KTM UIN Malang atas nama saya, Alivia")
+        klaim("10", "di dalamnya ada KTP atas nama saya, Alivia")
         klaim("19", "ada stiker Cargloss di sisi kiri helm", keputusan="disetujui")
         db.commit()
     print(f"Selesai dalam {time.perf_counter() - t0:.1f} detik. Login demo: alivia@lostlink.local / demo12345")

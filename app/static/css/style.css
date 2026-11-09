@@ -1,4 +1,4 @@
-/* LOSTLINK — tampilan ringan dan ramah untuk mahasiswa sampai staf kampus.
+/* LOSTLINK — tampilan ringan dan ramah untuk pengguna umum (remaja sampai usia 40-an).
    Warna utama kuning mustard; warna status diambil dari palet tanah yang selaras:
    plum = hilang, sage = ditemukan, mustard tua = diverifikasi, biru keabuan = dikembalikan.
    Ciri khas: label status berbentuk "tag barang" seperti label bagasi. */
@@ -27,8 +27,12 @@ a { color:var(--indigo); }
 
 /* ---------- navbar ---------- */
 .ll-nav { background:var(--surface); border-bottom:1px solid var(--line); min-height:68px; position:sticky; top:0; z-index:10; }
-.ll-logo { width:34px; height:34px; border-radius:10px; background:var(--mustard); display:inline-flex; align-items:center; justify-content:center; color:var(--ink); font-size:17px; position:relative; flex:none; }
-.ll-logo::after { content:""; position:absolute; right:-3px; top:-3px; width:12px; height:12px; border-radius:50%; background:var(--temuan); border:2px solid var(--surface); }
+.ll-logo { width:34px; height:34px; border-radius:10px; background:url("/static/img/logo-icon.svg") center/cover no-repeat; display:inline-block; flex:none; }
+.ll-logo i { display:none; }
+.ll-ikon { width:54px; height:54px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; font-size:24px; flex:none; }
+.ll-ikon.dompet { background:var(--indigo-soft); color:var(--indigo); }
+.ll-ikon.tas { background:var(--temuan-soft); color:var(--temuan); }
+.ll-ikon.kunci { background:var(--hilang-soft); color:var(--hilang); }
 .ll-brand { font-weight:800; font-size:19px; letter-spacing:-.03em; color:var(--ink); text-decoration:none; }
 .ll-menu { gap:4px; overflow-x:auto; scrollbar-width:none; }
 .ll-nav .nav-link { color:var(--muted); font-weight:600; padding:8px 14px; border-radius:999px; white-space:nowrap; display:flex; align-items:center; gap:7px; }

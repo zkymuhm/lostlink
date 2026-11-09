@@ -12,11 +12,11 @@
       <form method="post" action="/register" novalidate>
         <div class="mb-3">
           <label class="form-label" for="nama">Nama lengkap</label>
-          <input class="form-control" id="nama" name="nama" value="{{ form.nama or '' }}" placeholder="Contoh: Alivia Wahyu Riandini" required>
+          <input class="form-control" id="nama" name="nama" value="{{ form.nama or '' }}" placeholder="Contoh: Alivia Wahyu" required>
         </div>
         <div class="mb-3">
           <label class="form-label" for="email">Email</label>
-          <input class="form-control" id="email" name="email" type="email" value="{{ form.email or '' }}" placeholder="nama@student.uin-malang.ac.id" required>
+          <input class="form-control" id="email" name="email" type="email" value="{{ form.email or '' }}" placeholder="nama@email.com" required>
         </div>
         <div class="mb-3">
           <label class="form-label" for="no_kontak">Nomor WhatsApp</label>
