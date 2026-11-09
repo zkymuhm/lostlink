@@ -5,7 +5,7 @@ Pemakaian (venv aktif, dari folder proyek):
 
 Membuat 2 akun demo (kata sandi demo12345):
   - alivia@lostlink.local  -> pemilik, 6 laporan barang hilang
-  - rahul@lostlink.local   -> penemu, 25 barang temuan + 27 pengecoh
+  - rahul@lostlink.local   -> penemu, 30 barang temuan + 27 pengecoh
 Lalu 1 klaim menunggu admin (dompet kulit) dan 1 barang sudah dikembalikan (helm).
 """
 import sys
@@ -51,6 +51,11 @@ BARANG = {
     "23": ("Keyboard mekanik 60%", "Lainnya", "tombol spasi agak macet"),
     "24": ("Case earbud biru muda", "Lainnya", "ada tali gantungan krem"),
     "25": ("Gelas kertas bergambar anime", "Lainnya", "ada nama Rafa di bawah gelas"),
+    "26": ("Kipas mini merah karakter robot", "Lainnya", "baling-baling ada yang retak"),
+    "27": ("Lotion Marina botol pump", "Lainnya", "isi tinggal sepertiga"),
+    "28": ("Stylus pen putih", "Lainnya", "ujung pen agak tumpul"),
+    "29": ("Gelas stainless bergagang", "Lainnya", "ada penyok kecil di bibir gelas"),
+    "30": ("Alat cukur gagang cokelat", "Lainnya", "ada tali karet di gagang"),
 }
 PENGECOH = ["Post-it kuning", "Gelas plastik biru", "Lem tube", "Mouse wireless hitam", "Charger putih", "Dompet Levi's cokelat",
             "Case earbud hitam", "Charger iPad putih", "Buku catatan spiral", "Gunting gagang hitam", "Parfum Legend", "Spray Adidas",

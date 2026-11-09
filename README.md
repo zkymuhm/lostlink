@@ -12,7 +12,7 @@ Arsitektur tiga lapis (laporan M3): browser (Jinja2 + Bootstrap 5) â†’ FastAPI â
 | 4.3 | Pencarian dan filter (kata kunci, kategori, lokasi, tanggal, jenis) | selesai |
 | 4.4 | Klaim, verifikasi ciri khusus, status 4 tahap, persetujuan admin | selesai |
 | 4.5 | Frontend pengguna dan halaman admin | selesai (tahap penyempurnaan) |
-| 5.1 | Dataset uji | 25/30 pasang (`uji_kelayakan/data`) |
+| 5.1 | Dataset uji | selesai: 30 pasang + 27 pengecoh (`uji_kelayakan/data`) |
 | 5.2 | Ekstraksi fitur ResNet18 (`app/matching.py`) | selesai |
 | 5.3 | Rekomendasi top-5 + filter kategori/waktu | selesai |
 
