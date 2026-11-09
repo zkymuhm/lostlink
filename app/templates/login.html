@@ -1,24 +1,29 @@
 {% extends "base.html" %}
 {% block title %}Masuk · LOSTLINK{% endblock %}
+{% block bodyclass %}{% endblock %}
 {% block body %}
-<div class="ll-card ll-auth">
-  <div class="d-flex align-items-center gap-2 mb-4"><span class="ll-logo"></span><span class="ll-brand">LOSTLINK</span></div>
-  <h1 class="h3 fw-bold mb-1">Masuk</h1>
-  <p class="ll-muted mb-4">Masuk untuk melapor dan melacak barang hilang.</p>
-  {% if info %}<div class="alert alert-secondary py-2">{{ info }}</div>{% endif %}
-  {% if error %}<div class="alert alert-danger py-2">{{ error }}</div>{% endif %}
-  <form method="post" action="/login" novalidate>
-    <div class="mb-3">
-      <label class="form-label" for="email">Email</label>
-      <input class="form-control" id="email" name="email" type="email" value="{{ email }}" placeholder="nama@student.uin-malang.ac.id" required autofocus>
+<div class="ll-auth-wrap">
+  {% include "_auth_side.html" %}
+  <div class="ll-auth-main">
+    <div class="ll-auth">
+      <h1 class="h2 mb-1">Masuk</h1>
+      <p class="ll-muted mb-4">Lanjutkan melapor dan memantau barangmu.</p>
+      {% if info %}<div class="alert alert-secondary py-2"><i class="bi bi-check-circle-fill me-1"></i>{{ info }}</div>{% endif %}
+      {% if error %}<div class="ll-note mb-3" role="alert"><div class="judul"><i class="bi bi-info-circle-fill"></i>{{ error }}</div></div>{% endif %}
+      <form method="post" action="/login" novalidate>
+        <div class="mb-3">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-control" id="email" name="email" type="email" value="{{ email }}" placeholder="nama@student.uin-malang.ac.id" required autofocus>
+        </div>
+        <div class="mb-4">
+          <label class="form-label" for="password">Kata sandi</label>
+          <input class="form-control" id="password" name="password" type="password" required>
+        </div>
+        <button class="btn btn-ll w-100">Masuk</button>
+      </form>
+      <p class="text-center mt-4 mb-1">Belum punya akun? <a href="/register" class="fw-bold">Daftar</a></p>
+      <p class="text-center ll-muted small">Pengguna dan admin masuk lewat halaman yang sama.</p>
     </div>
-    <div class="mb-4">
-      <label class="form-label" for="password">Kata sandi</label>
-      <input class="form-control" id="password" name="password" type="password" required>
-    </div>
-    <button class="btn btn-ll w-100">Masuk</button>
-  </form>
-  <p class="text-center mt-4 mb-0">Belum punya akun? <a href="/register" class="fw-semibold text-dark">Daftar</a></p>
+  </div>
 </div>
-<p class="text-center ll-muted small">Pengguna dan admin masuk lewat halaman yang sama; peran ditentukan otomatis setelah login.</p>
 {% endblock %}

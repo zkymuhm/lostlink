@@ -25,11 +25,27 @@ def _form_ctx(**kw):
     return base
 
 
+def _judul_default(kategori: str, lokasi: str) -> str:
+    return f"Barang {kategori.lower()} di {lokasi}" if kategori and lokasi else "Barang"
+
+
+def _baca_waktu(waktu: str, errors: list[str]) -> datetime:
+    """Waktu boleh dikosongkan (dianggap sekarang); hanya masa depan yang ditolak."""
+    if not waktu:
+        return datetime.now().replace(second=0, microsecond=0)
+    try:
+        dt = datetime.fromisoformat(waktu)
+    except ValueError:
+        return datetime.now().replace(second=0, microsecond=0)
+    if dt > datetime.now() + timedelta(minutes=5):
+        errors.append("Waktunya ada di masa depan. Pilih kira-kira kapan terakhir kamu melihat barang itu.")
+    return dt
+
+
 @router.get("/lapor")
 def lapor_form(request: Request, jenis: str = "hilang", user: User = Depends(current_user)):
     jenis = jenis if jenis in JENIS else "hilang"
-    now = datetime.now().strftime("%Y-%m-%dT%H:%M")
-    return templates.TemplateResponse(request, "lapor.html", _form_ctx(user=user, form={"jenis": jenis, "waktu": now}))
+    return templates.TemplateResponse(request, "lapor.html", _form_ctx(user=user, form={"jenis": jenis}))
 
 
 @router.post("/laporan")
@@ -48,32 +64,24 @@ async def kirim_laporan(
     form = {"jenis": jenis, "kategori": kategori, "deskripsi": deskripsi.strip(), "ciri_khusus": ciri_khusus.strip(),
             "lokasi": lokasi.strip(), "waktu": waktu}
     errors = []
+    # Wajib hanya: jenis, foto, kategori, lokasi. Detail lain boleh dilengkapi nanti.
     if jenis not in JENIS:
-        errors.append("Pilih jenis laporan: barang hilang atau barang temuan.")
-    if kategori not in KATEGORI:
-        errors.append("Pilih kategori barang.")
-    if len(form["deskripsi"]) < 5:
-        errors.append("Ciri-ciri umum wajib diisi (minimal 5 karakter).")
-    if len(form["ciri_khusus"]) < 3:
-        errors.append("Ciri khusus (rahasia) wajib diisi; dipakai untuk verifikasi pemilik.")
-    if not form["lokasi"]:
-        errors.append("Lokasi wajib diisi.")
-    try:
-        waktu_dt = datetime.fromisoformat(waktu)
-        if waktu_dt > datetime.now() + timedelta(minutes=5):
-            errors.append("Waktu kejadian tidak boleh di masa depan.")
-    except ValueError:
-        waktu_dt = None
-        errors.append("Isi perkiraan waktu kejadian.")
-
+        errors.append("Pilih dulu: barangmu hilang, atau kamu menemukan barang.")
     data = await foto.read() if foto and foto.filename else b""
     ext = Path(foto.filename).suffix.lower() if foto and foto.filename else ""
     if not data:
-        errors.append("Unggah satu foto barang.")
+        errors.append("Fotonya belum ada, yuk unggah satu. Foto membantu kami mencarikan barang yang mirip.")
     elif ext not in FOTO_EXT:
-        errors.append("Format foto harus JPG, PNG, WEBP, atau HEIC.")
+        errors.append("Format fotonya belum didukung. Pakai JPG, PNG, WEBP, atau HEIC, ya.")
     elif len(data) > MAX_FOTO_MB * 1024 * 1024:
-        errors.append(f"Ukuran foto maksimal {MAX_FOTO_MB} MB.")
+        errors.append(f"Fotonya lebih dari {MAX_FOTO_MB} MB. Coba pilih ulang dari galeri, biasanya ukurannya lebih kecil.")
+    if kategori not in KATEGORI:
+        errors.append("Pilih kategori yang paling mendekati. Kalau ragu, pilih Lainnya.")
+    if not form["lokasi"]:
+        errors.append("Tulis perkiraan lokasinya, misalnya Perpustakaan lantai 2.")
+    if jenis == "temuan" and len(form["ciri_khusus"]) < 3:
+        errors.append("Tulis satu ciri khusus yang hanya diketahui pemiliknya, supaya barang tidak diklaim orang yang salah.")
+    waktu_dt = _baca_waktu(waktu, errors)
 
     path = None
     if not errors:
@@ -85,7 +93,7 @@ async def kirim_laporan(
             path = UPLOAD_DIR / f"{uuid.uuid4().hex}.jpg"  # nama acak (laporan M3)
             img.save(path, "JPEG", quality=88)
         except Exception:  # noqa: BLE001
-            errors.append("File yang diunggah bukan foto yang valid.")
+            errors.append("File ini sepertinya bukan foto. Coba pilih foto dari galeri atau kamera.")
         finally:
             tmp.unlink(missing_ok=True)
 
@@ -95,14 +103,54 @@ async def kirim_laporan(
     t0 = time.perf_counter()
     vektor = matching.ke_bytes(matching.ekstrak(path))
     item = Item(
-        user_id=user.id, jenis=jenis, kategori=kategori, deskripsi=form["deskripsi"], ciri_khusus=form["ciri_khusus"],
-        lokasi=form["lokasi"], waktu_kejadian=waktu_dt, path_foto=path.name, vektor_fitur=vektor,
-        status="Hilang" if jenis == "hilang" else "Ditemukan",
+        user_id=user.id, jenis=jenis, kategori=kategori, deskripsi=form["deskripsi"] or _judul_default(kategori, form["lokasi"]),
+        ciri_khusus=form["ciri_khusus"], lokasi=form["lokasi"], waktu_kejadian=waktu_dt, path_foto=path.name,
+        vektor_fitur=vektor, status="Hilang" if jenis == "hilang" else "Ditemukan",
     )
     db.add(item)
     db.commit()
-    request.session["flash"] = f"Laporan tersimpan. Foto diproses dalam {time.perf_counter() - t0:.2f} detik."
-    return RedirectResponse(f"/rekomendasi/{item.id}" if jenis == "hilang" else f"/laporan/{item.id}", status_code=303)
+    detik = time.perf_counter() - t0
+    if jenis == "hilang":
+        request.session["flash"] = f"Laporanmu tersimpan dan langsung dicocokkan ({detik:.1f} detik). Ini barang temuan yang paling mirip."
+        return RedirectResponse(f"/rekomendasi/{item.id}", status_code=303)
+    request.session["flash"] = "Terima kasih! Barang temuanmu tersimpan dan kini bisa ditemukan pemiliknya."
+    return RedirectResponse(f"/laporan/{item.id}", status_code=303)
+
+
+@router.get("/laporan/{item_id}/ubah")
+def ubah_form(item_id: int, request: Request, user: User = Depends(current_user), db: Session = Depends(get_db)):
+    item = db.get(Item, item_id)
+    if item is None or item.user_id != user.id:
+        raise HTTPException(404, "Laporan tidak ditemukan atau bukan milikmu.")
+    form = {"kategori": item.kategori, "deskripsi": item.deskripsi, "ciri_khusus": item.ciri_khusus, "lokasi": item.lokasi,
+            "waktu": item.waktu_kejadian.strftime("%Y-%m-%dT%H:%M")}
+    return templates.TemplateResponse(request, "ubah.html", _form_ctx(user=user, item=item, form=form, aktif="Status laporan"))
+
+
+@router.post("/laporan/{item_id}/ubah")
+def ubah(item_id: int, request: Request, kategori: str = Form(""), deskripsi: str = Form(""), ciri_khusus: str = Form(""),
+         lokasi: str = Form(""), waktu: str = Form(""), user: User = Depends(current_user), db: Session = Depends(get_db)):
+    item = db.get(Item, item_id)
+    if item is None or item.user_id != user.id:
+        raise HTTPException(404, "Laporan tidak ditemukan atau bukan milikmu.")
+    form = {"kategori": kategori, "deskripsi": deskripsi.strip(), "ciri_khusus": ciri_khusus.strip(), "lokasi": lokasi.strip(), "waktu": waktu}
+    errors = []
+    if kategori not in KATEGORI:
+        errors.append("Pilih kategori yang paling mendekati. Kalau ragu, pilih Lainnya.")
+    if not form["lokasi"]:
+        errors.append("Tulis perkiraan lokasinya, misalnya Perpustakaan lantai 2.")
+    if item.jenis == "temuan" and len(form["ciri_khusus"]) < 3:
+        errors.append("Barang temuan perlu satu ciri khusus untuk verifikasi pemilik.")
+    waktu_dt = _baca_waktu(waktu, errors)
+    if errors:
+        return templates.TemplateResponse(request, "ubah.html", _form_ctx(user=user, item=item, form=form, errors=errors,
+                                                                          aktif="Status laporan"), status_code=400)
+    item.kategori, item.lokasi, item.waktu_kejadian = kategori, form["lokasi"], waktu_dt
+    item.deskripsi = form["deskripsi"] or _judul_default(kategori, form["lokasi"])
+    item.ciri_khusus = form["ciri_khusus"]
+    db.commit()
+    request.session["flash"] = "Detail laporan diperbarui."
+    return RedirectResponse(f"/laporan/{item.id}", status_code=303)
 
 
 @router.get("/laporan")

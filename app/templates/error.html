@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% block title %}{{ kode }} · LOSTLINK{% endblock %}
+{% block bodyclass %}{% endblock %}
 {% block body %}
-<div class="ll-card ll-auth text-center">
-  <h1 class="h2 fw-bold">{{ kode }}</h1>
-  <p class="ll-muted">{{ pesan }}</p>
-  <a class="btn btn-ll" href="/">Kembali ke beranda</a>
+<div class="ll-auth-main" style="min-height:100vh">
+  <div class="ll-card p-5 text-center" style="max-width:440px">
+    <div class="ll-logo mx-auto mb-3"><i class="bi bi-signpost-split"></i></div>
+    <h1 class="h2">{{ kode }}</h1>
+    <p class="ll-muted">{{ pesan }}</p>
+    <a class="btn btn-ll" href="/">Kembali ke beranda</a>
+  </div>
 </div>
 {% endblock %}

@@ -3,21 +3,6 @@
 Kelompok 1 Manajemen Proyek, Teknik Informatika UIN Maulana Malik Ibrahim Malang.
 Arsitektur tiga lapis (laporan M3): browser (Jinja2 + Bootstrap 5) → FastAPI → SQLite + folder `uploads/`.
 
-## Status implementasi
-
-| WBS | Modul | Status |
-|---|---|---|
-| 4.1 | Login dan registrasi berbasis peran | selesai |
-| 4.2 | Pelaporan barang (foto, kategori, ciri, lokasi, waktu) | selesai |
-| 4.3 | Pencarian dan filter (kata kunci, kategori, lokasi, tanggal, jenis) | selesai |
-| 4.4 | Klaim, verifikasi ciri khusus, status 4 tahap, persetujuan admin | selesai |
-| 4.5 | Frontend pengguna dan halaman admin | selesai (tahap penyempurnaan) |
-| 5.1 | Dataset uji | selesai: 30 pasang + 27 pengecoh (`uji_kelayakan/data`) |
-| 5.2 | Ekstraksi fitur ResNet18 (`app/matching.py`) | selesai |
-| 5.3 | Rekomendasi top-5 + filter kategori/waktu | selesai |
-
-Test otomatis: `python -m pytest -q` (15 test).
-
 ## Menjalankan (macOS, Python 3.11)
 
     cd ~/development/lostlink

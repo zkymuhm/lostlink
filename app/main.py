@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from starlette.middleware.sessions import SessionMiddleware
 
 from . import matching
-from .auth import LoginRequired, current_user
+from .auth import LoginRequired
 from .config import UPLOAD_DIR
 from .database import Base, engine, get_db
 from .models import Item, User
@@ -56,11 +56,15 @@ async def http_error(request: Request, exc: HTTPException):
 
 
 @app.get("/")
-def beranda(request: Request, user: User = Depends(current_user), db: Session = Depends(get_db)):
+def beranda(request: Request, db: Session = Depends(get_db)):
+    uid = request.session.get("user_id")
+    user = db.get(User, uid) if uid else None
+    if user is None or not user.aktif:  # pengunjung belum login -> landing page
+        return templates.TemplateResponse(request, "landing.html", {})
     if user.peran == "admin":
         return RedirectResponse("/admin/klaim", status_code=303)
     saya = db.scalars(select(Item).where(Item.user_id == user.id).order_by(Item.dibuat_pada.desc()).limit(5)).all()
     temuan = db.scalars(select(Item).where(Item.jenis == "temuan").order_by(Item.dibuat_pada.desc()).limit(4)).all()
     return templates.TemplateResponse(request, "beranda.html", {
-        "user": user, "saya": saya, "temuan": temuan, "aktif": "Beranda",
+        "user": user, "saya": saya, "temuan": temuan, "aktif": "Beranda", "flash": request.session.pop("flash", None),
         "kategori_list": ("Tas", "Dompet", "Ponsel", "Kunci", "Lainnya")})

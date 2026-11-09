@@ -5,23 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}LOSTLINK{% endblock %}</title>
   <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/css/bootstrap-icons.min.css" rel="stylesheet">
   <link href="/static/css/style.css" rel="stylesheet">
 </head>
-<body>
+<body class="{% block bodyclass %}has-tabbar{% endblock %}">
 {% block body %}
-<nav class="ll-nav d-flex align-items-center px-4">
-  <a class="ll-brand d-flex align-items-center gap-2" href="/"><span class="ll-logo"></span>LOSTLINK</a>
-  <div class="mx-auto d-flex gap-2">
-    {% for label, url in [("Beranda", "/"), ("Lapor barang", "/lapor"), ("Rekomendasi", "/rekomendasi"), ("Status laporan", "/saya")] %}
-      <a class="nav-link {% if aktif == label %}active{% endif %}" href="{{ url }}">{{ label }}</a>
+<nav class="ll-nav d-flex align-items-center px-3 px-md-4">
+  <a class="ll-brand d-flex align-items-center gap-2" href="/"><span class="ll-logo"><i class="bi bi-link-45deg"></i></span>LOSTLINK</a>
+  <div class="ll-menu d-flex mx-auto">
+    {% for label, url, icon in [("Beranda", "/", "house"), ("Lapor barang", "/lapor", "plus-circle"), ("Rekomendasi", "/rekomendasi", "stars"), ("Status laporan", "/saya", "list-check")] %}
+      <a class="nav-link {% if aktif == label %}active{% endif %}" href="{{ url }}"><i class="bi bi-{{ icon }}"></i><span>{{ label }}</span></a>
     {% endfor %}
   </div>
-  <div class="d-flex align-items-center gap-2">
-    <span class="ll-avatar"></span><strong>{{ user.nama.split(' ')[0] }}</strong>
-    <form method="post" action="/logout" class="ms-2"><button class="btn btn-sm btn-ll-outline">Keluar</button></form>
+  <div class="d-flex align-items-center gap-2 ms-auto ms-md-0">
+    <span class="ll-avatar" aria-hidden="true">{{ user.nama[:1]|upper }}</span><strong class="d-none d-sm-inline">{{ user.nama.split(' ')[0] }}</strong>
+    <form method="post" action="/logout" class="ms-2"><button class="btn btn-sm btn-ll-outline"><i class="bi bi-box-arrow-right"></i> Keluar</button></form>
   </div>
 </nav>
-<main class="container-xxl py-4 px-4">{% block content %}{% endblock %}</main>
+<main class="container-xxl py-4 px-3 px-md-4">{% block content %}{% endblock %}</main>
 {% endblock %}
 </body>
 </html>

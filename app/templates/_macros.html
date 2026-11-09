@@ -1,9 +1,9 @@
 {% macro badge(status) -%}
-<span class="ll-badge {% if status in ('Dikembalikan',) %}dark{% endif %}">{{ status }}</span>
+<span class="ll-badge st-{{ status|lower }}">{{ status }}</span>
 {%- endmacro %}
 
 {% macro foto(item, h=150, cls="") -%}
-<img src="/foto/{{ item.path_foto }}" alt="Foto {{ item.kategori }}" class="ll-foto {{ cls }}" style="height:{{ h }}px" loading="lazy">
+<img src="/foto/{{ item.path_foto }}" alt="Foto {{ item.deskripsi }}" class="ll-foto {{ cls }}" style="height:{{ h }}px" loading="lazy">
 {%- endmacro %}
 
 {% macro judul(item) -%}{{ item.deskripsi.split('.')[0][:40] }}{%- endmacro %}
@@ -12,15 +12,15 @@
 
 {% macro kartu(item) -%}
 <a class="ll-card ll-card-link p-2 h-100" href="/laporan/{{ item.id }}">
-  {{ foto(item, 150) }}
+  <div class="ll-photo">{{ foto(item, 170) }}{{ badge(item.status) }}</div>
   <div class="px-2 pt-2 pb-1">
-    <div class="fw-semibold text-truncate">{{ judul(item) }}</div>
-    <div class="ll-muted small">{{ item.jenis|capitalize }} · {{ item.lokasi }} · {{ item.waktu_kejadian.strftime('%d %b') }}</div>
-    <div class="d-flex justify-content-between align-items-center mt-2">{{ badge(item.status) }}<span class="small fw-semibold">Lihat</span></div>
+    <div class="fw-bold text-truncate">{{ judul(item) }}</div>
+    <div class="ll-muted small"><i class="bi bi-geo-alt"></i> {{ item.lokasi }}</div>
+    <div class="ll-muted small"><i class="bi bi-calendar3"></i> {{ 'Hilang' if item.jenis == 'hilang' else 'Ditemukan' }} {{ item.waktu_kejadian.strftime('%d %b') }}</div>
   </div>
 </a>
 {%- endmacro %}
 
 {% macro flash_box(flash) -%}
-{% if flash %}<div class="alert alert-secondary py-2">{{ flash }}</div>{% endif %}
+{% if flash %}<div class="alert alert-secondary py-2"><i class="bi bi-check-circle-fill me-1"></i>{{ flash }}</div>{% endif %}
 {%- endmacro %}

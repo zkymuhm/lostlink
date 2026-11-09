@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}LOSTLINK · Temukan barang hilang di kampus lewat foto{% endblock %}
+{% block bodyclass %}{% endblock %}
+{% block body %}
+<div class="container-xxl px-3 px-md-4">
+  <nav class="ll-landing-nav">
+    <span class="ll-brand d-flex align-items-center gap-2"><span class="ll-logo"><i class="bi bi-link-45deg"></i></span>LOSTLINK</span>
+    <div class="d-flex gap-2"><a class="btn btn-ll-outline" href="/login">Masuk</a><a class="btn btn-ll d-none d-sm-inline-block" href="/register">Daftar</a></div>
+  </nav>
+
+  <section class="ll-landing-hero row g-5 align-items-center">
+    <div class="col-lg-6">
+      <h1 class="mb-3">Barang hilang di kampus? Cari lewat fotonya.</h1>
+      <p class="lead mb-4">Unggah foto barangmu. LOSTLINK menunjukkan barang temuan yang paling mirip dalam hitungan detik, lalu admin memastikan barang kembali ke pemilik yang benar.</p>
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-ll btn-lg" href="/register"><i class="bi bi-search-heart"></i> Laporkan barang hilang</a>
+        <a class="btn btn-ll-outline btn-lg" href="/register"><i class="bi bi-box2-heart"></i> Aku menemukan barang</a>
+      </div>
+      <p class="ll-muted small mt-3 mb-0">Sudah punya akun? <a href="/login" class="fw-bold">Masuk di sini</a>.</p>
+    </div>
+    <div class="col-lg-6">
+      <div class="ll-hero-card">
+        <div class="fw-bold mb-3">5 barang temuan paling mirip</div>
+        {% for nama, tempat, skor, warna in [("Dompet kulit hitam lipat", "Gedung B", 91, "#3A3530"), ("Dompet anyaman hitam", "Gedung A", 78, "#55504A"), ("Dompet Levi's cokelat", "Parkiran motor", 64, "#8A5A36")] %}
+        <div class="mini">
+          <span class="ph" style="background:{{ warna }}"></span>
+          <div class="flex-grow-1"><div class="fw-bold small">{{ nama }}</div><div class="ll-muted" style="font-size:12px"><i class="bi bi-geo-alt"></i> {{ tempat }}</div>
+            <div class="ll-bar mt-1"><div style="width:{{ skor }}%"></div></div></div>
+          <strong class="small">{{ skor }}%</strong>
+        </div>
+        {% endfor %}
+        <p class="small mt-3 mb-0" style="color:#5A5034">Contoh tampilan. Skor menunjukkan kemiripan foto, bukan kepastian kepemilikan.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-5">
+    <h2 class="h3 mb-4">Cara kerjanya</h2>
+    <div class="row g-4 ll-langkah">
+      <div class="col-md-4 item"><div class="ll-card p-4 h-100"><span class="no"></span><h3 class="h5">Foto dan laporkan</h3><p class="ll-muted mb-0">Cukup foto, kategori, dan lokasi terakhir. Detail lain bisa dilengkapi nanti.</p></div></div>
+      <div class="col-md-4 item"><div class="ll-card p-4 h-100"><span class="no"></span><h3 class="h5">Lihat yang paling mirip</h3><p class="ll-muted mb-0">Sistem membandingkan fotomu dengan semua barang temuan dan menampilkan 5 yang paling mirip.</p></div></div>
+      <div class="col-md-4 item"><div class="ll-card p-4 h-100"><span class="no"></span><h3 class="h5">Buktikan, lalu ambil</h3><p class="ll-muted mb-0">Sebutkan ciri khusus barangmu. Setelah admin menyetujui, kontak penemu dibuka untukmu.</p></div></div>
+    </div>
+  </section>
+
+  <section class="row g-4 mb-5 align-items-stretch">
+    <div class="col-lg-5">
+      <div class="ll-card p-4 h-100">
+        <div class="ll-angka">96,7%</div>
+        <p class="fw-bold mt-2 mb-1">barang yang benar muncul di 5 rekomendasi teratas</p>
+        <p class="ll-muted small mb-0">Hasil uji tim pada 30 pasang foto barang asli dan 27 foto pengecoh. Setiap foto diproses sekitar 0,3 detik.</p>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="ll-card p-4 h-100">
+        <h2 class="h5 mb-3">Aman untuk pemilik dan penemu</h2>
+        <ul class="ll-check">
+          <li><i class="bi bi-lock"></i><span><strong>Ciri khusus tetap rahasia.</strong> Hanya admin yang melihatnya saat memeriksa klaim.</span></li>
+          <li><i class="bi bi-telephone"></i><span><strong>Nomor kontak tidak dipajang.</strong> Kontak penemu baru dibuka setelah klaim disetujui.</span></li>
+          <li><i class="bi bi-person-check"></i><span><strong>Keputusan akhir oleh manusia.</strong> Sistem hanya mengurutkan kandidat; admin yang memverifikasi.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="ll-hero mb-5 text-center">
+    <div class="position-relative" style="z-index:1">
+      <h2 class="h2 mb-2">Kehilangan barang hari ini?</h2>
+      <p class="mx-auto mb-4">Semakin cepat dilaporkan, semakin besar kemungkinan barangmu kembali.</p>
+      <a class="btn btn-ll btn-lg" style="background:var(--ink);color:#fff" href="/register">Buat akun dan laporkan</a>
+    </div>
+  </section>
+
+  <footer class="ll-footer d-flex flex-wrap justify-content-between gap-2">
+    <span>LOSTLINK, prototipe Kelompok 1 Manajemen Proyek, Teknik Informatika UIN Maulana Malik Ibrahim Malang, 2026.</span>
+    <a href="/login" class="fw-bold">Masuk</a>
+  </footer>
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@
 {% from "_macros.html" import badge, foto, judul, flash_box %}
 {% block title %}Persetujuan klaim · LOSTLINK Admin{% endblock %}
 {% block content %}
-<h1 class="h3 fw-bold mb-1">Persetujuan klaim</h1>
+<h1 class="h2 mb-1">Persetujuan klaim</h1>
 <p class="ll-muted">Bandingkan ciri khusus dari penemu dengan jawaban pemilik, lalu setujui atau tolak pengembalian.</p>
 {{ flash_box(flash) }}
 <div class="d-flex gap-2 mb-3">
@@ -11,7 +11,7 @@
 </div>
 <div class="row g-4">
   <div class="col-xl-7">
-    <div class="ll-card overflow-hidden">
+    <div class="ll-card overflow-hidden table-responsive">
       <table class="table table-ll">
         <thead><tr><th class="ps-3">Barang</th><th>Pengklaim</th><th>Kemiripan</th><th>{% if status == 'menunggu' %}Verifikasi{% else %}Keputusan{% endif %}</th></tr></thead>
         <tbody>
@@ -29,7 +29,7 @@
   <div class="col-xl-5">
     {% if pilih %}
     <div class="ll-card p-4">
-      <h2 class="h5 fw-bold">Detail klaim: {{ judul(pilih.lost) }}</h2>
+      <h2 class="h5">Detail klaim: {{ judul(pilih.lost) }}</h2>
       <div class="row g-2 my-3">
         <div class="col-6">{{ foto(pilih.lost, 140) }}<div class="ll-muted small mt-1">Foto laporan hilang</div></div>
         <div class="col-6">{{ foto(pilih.found, 140) }}<div class="ll-muted small mt-1">Foto barang temuan</div></div>
@@ -40,8 +40,8 @@
       <div class="ll-muted small">Pengklaim</div><div class="fw-semibold mb-3">{{ pilih.pengklaim.nama }} ({{ pilih.pengklaim.email }})</div>
       {% if not pilih.v.keputusan_admin %}
       <div class="d-flex gap-2">
-        <form class="flex-fill" method="post" action="/admin/klaim/{{ pilih.v.id }}/tolak"><button class="btn btn-ll-outline w-100">Tolak</button></form>
-        <form class="flex-fill" method="post" action="/admin/klaim/{{ pilih.v.id }}/setujui"><button class="btn btn-ll w-100">Setujui pengembalian</button></form>
+        <form class="flex-fill" method="post" action="/admin/klaim/{{ pilih.v.id }}/tolak"><button class="btn btn-danger-soft w-100 py-2"><i class="bi bi-x-circle"></i> Tolak</button></form>
+        <form class="flex-fill" method="post" action="/admin/klaim/{{ pilih.v.id }}/setujui"><button class="btn btn-ll w-100" style="background:var(--temuan);color:#fff"><i class="bi bi-check2-circle"></i> Setujui pengembalian</button></form>
       </div>
       <p class="ll-muted small mt-2 mb-0">Setelah disetujui, status barang berubah menjadi Dikembalikan dan kontak penemu dibuka untuk pemilik.</p>
       {% else %}

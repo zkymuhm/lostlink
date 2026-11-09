@@ -1,0 +1,6 @@
+{% if errors %}
+<div class="ll-note mb-3" role="alert">
+  <div class="judul"><i class="bi bi-info-circle-fill"></i>{% if errors|length == 1 %}Sedikit lagi.{% else %}Masih ada {{ errors|length }} hal yang perlu dilengkapi.{% endif %}</div>
+  <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+</div>
+{% endif %}

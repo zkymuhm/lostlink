@@ -2,19 +2,19 @@
 {% from "_macros.html" import badge, flash_box %}
 {% block title %}Pengguna · LOSTLINK Admin{% endblock %}
 {% block content %}
-<h1 class="h3 fw-bold mb-1">Pengguna</h1>
+<h1 class="h2 mb-1">Pengguna</h1>
 <p class="ll-muted">Daftar akun terdaftar. Admin dapat menonaktifkan akun yang menyalahgunakan sistem.</p>
 {{ flash_box(flash) }}
 <form class="d-flex gap-2 mb-3" method="get"><input class="form-control" style="max-width:380px" name="q" value="{{ q }}" placeholder="Cari nama atau email"><button class="btn btn-ll">Cari</button></form>
-<div class="ll-card overflow-hidden">
+<div class="ll-card overflow-hidden table-responsive">
 <table class="table table-ll">
   <thead><tr><th class="ps-3">Nama</th><th>Email</th><th>Peran</th><th>Laporan</th><th>Status</th><th>Terdaftar</th><th class="text-end pe-3">Aksi</th></tr></thead>
   <tbody>
   {% for u, n in rows %}
   <tr><td class="ps-3 fw-semibold">{{ u.nama }}</td><td class="ll-muted">{{ u.email }}</td>
-    <td><span class="ll-badge {% if u.peran == 'admin' %}dark{% endif %}">{{ u.peran|capitalize }}</span></td><td>{{ n }}</td>
-    <td><span class="ll-badge {% if not u.aktif %}dark{% endif %}">{{ 'Aktif' if u.aktif else 'Nonaktif' }}</span></td><td>{{ u.dibuat_pada.strftime('%d %b %Y') }}</td>
-    <td class="text-end pe-3">{% if u.peran != 'admin' %}<form method="post" action="/admin/pengguna/{{ u.id }}/nonaktif"><button class="btn btn-sm {{ 'btn-ll' if u.aktif else 'btn-ll-outline' }}" style="width:110px">{{ 'Nonaktifkan' if u.aktif else 'Aktifkan' }}</button></form>{% else %}—{% endif %}</td></tr>
+    <td><span class="ll-badge st-{{ u.peran }}">{{ u.peran|capitalize }}</span></td><td>{{ n }}</td>
+    <td><span class="ll-badge st-{{ 'aktif' if u.aktif else 'nonaktif' }}">{{ 'Aktif' if u.aktif else 'Nonaktif' }}</span></td><td>{{ u.dibuat_pada.strftime('%d %b %Y') }}</td>
+    <td class="text-end pe-3">{% if u.peran != 'admin' %}<form method="post" action="/admin/pengguna/{{ u.id }}/nonaktif"><button class="btn btn-sm {{ 'btn-danger-soft' if u.aktif else 'btn-ll-outline' }}" style="width:110px">{{ 'Nonaktifkan' if u.aktif else 'Aktifkan' }}</button></form>{% else %}—{% endif %}</td></tr>
   {% endfor %}
   </tbody>
 </table>

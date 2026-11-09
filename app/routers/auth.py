@@ -38,19 +38,19 @@ def register(
     nama, email, no_kontak = nama.strip(), email.strip().lower(), no_kontak.strip()
     errors = []
     if not nama:
-        errors.append("Nama lengkap wajib diisi.")
+        errors.append("Nama lengkapnya belum diisi.")
     if not EMAIL_RE.match(email):
-        errors.append("Format email tidak valid.")
+        errors.append("Format email belum tepat, contohnya nama@student.uin-malang.ac.id.")
     elif db.scalar(select(User).where(User.email == email)):
-        errors.append("Email sudah terdaftar. Silakan masuk.")
+        errors.append("Email ini sudah terdaftar. Coba masuk saja.")
     if not re.fullmatch(r"[0-9+ ]{8,20}", no_kontak):
-        errors.append("Nomor kontak harus berisi 8–20 angka.")
+        errors.append("Nomor WhatsApp berisi 8–20 angka, contohnya 081234567890.")
     if len(password) < 8:
-        errors.append("Kata sandi minimal 8 karakter.")
+        errors.append("Kata sandi minimal 8 karakter, ya.")
     if password != password2:
-        errors.append("Ulangi kata sandi tidak sama.")
+        errors.append("Ulangi kata sandi tidak sama dengan kata sandi di sebelahnya.")
     if not setuju:
-        errors.append("Centang persetujuan penggunaan data.")
+        errors.append("Centang persetujuan penggunaan data untuk melanjutkan.")
     if errors:
         form = {"nama": nama, "email": email, "no_kontak": no_kontak}
         return templates.TemplateResponse(request, "register.html", {"errors": errors, "form": form}, status_code=400)
@@ -62,7 +62,7 @@ def register(
 
 @router.get("/login")
 def login_form(request: Request, daftar: int = 0):
-    info = "Akun berhasil dibuat. Silakan masuk." if daftar else None
+    info = "Akunmu sudah jadi. Silakan masuk." if daftar else None
     return templates.TemplateResponse(request, "login.html", {"error": None, "info": info, "email": ""})
 
 
@@ -72,9 +72,9 @@ def login(request: Request, email: str = Form(""), password: str = Form(""), db:
     user = db.scalar(select(User).where(User.email == email))
     error = None
     if user is None or not verify_password(password, user.password_hash):
-        error = "Email atau kata sandi salah."
+        error = "Email atau kata sandinya belum cocok. Coba periksa lagi."
     elif not user.aktif:
-        error = "Akun ini dinonaktifkan admin."
+        error = "Akun ini sedang dinonaktifkan admin. Hubungi admin bila menurutmu ini keliru."
     if error:
         return templates.TemplateResponse(request, "login.html", {"error": error, "info": None, "email": email}, status_code=401)
 

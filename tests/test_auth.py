@@ -24,8 +24,11 @@ def test_halaman_publik_tampil():
     assert c.get("/register").status_code == 200
 
 
-def test_belum_login_diarahkan_ke_login():
-    r = client().get("/")
+def test_pengunjung_melihat_landing_dan_halaman_privat_ke_login():
+    c = client()
+    r = c.get("/")
+    assert r.status_code == 200 and "Cara kerjanya" in r.text
+    r = c.get("/saya")
     assert r.status_code == 303 and r.headers["location"] == "/login"
 
 
@@ -76,7 +79,7 @@ def test_logout():
     c = client()
     login(c, "alivia@test.id", "rahasia123")
     c.post("/logout")
-    assert c.get("/").status_code == 303
+    assert c.get("/saya").status_code == 303
 
 
 def test_akun_nonaktif_tidak_bisa_login():

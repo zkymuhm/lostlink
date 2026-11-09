@@ -1,41 +1,40 @@
 {% extends "base.html" %}
 {% block title %}Daftar · LOSTLINK{% endblock %}
+{% block bodyclass %}{% endblock %}
 {% block body %}
-<div class="ll-card ll-auth" style="max-width:480px;margin-top:48px">
-  <div class="d-flex align-items-center gap-2 mb-4"><span class="ll-logo"></span><span class="ll-brand">LOSTLINK</span></div>
-  <h1 class="h3 fw-bold mb-1">Buat akun</h1>
-  <p class="ll-muted mb-4">Akun dipakai untuk melapor, mengajukan klaim, dan melihat status barang.</p>
-  {% if errors %}<div class="alert alert-danger py-2"><ul class="mb-0 ps-3">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
-  <form method="post" action="/register" novalidate>
-    <div class="mb-3">
-      <label class="form-label" for="nama">Nama lengkap</label>
-      <input class="form-control" id="nama" name="nama" value="{{ form.nama or '' }}" placeholder="Contoh: Alivia Wahyu Riandini" required>
+<div class="ll-auth-wrap">
+  {% include "_auth_side.html" %}
+  <div class="ll-auth-main">
+    <div class="ll-auth" style="max-width:460px">
+      <h1 class="h2 mb-1">Buat akun</h1>
+      <p class="ll-muted mb-4">Akun dipakai untuk melapor, mengajukan klaim, dan melihat status barang.</p>
+      {% include "_catatan.html" %}
+      <form method="post" action="/register" novalidate>
+        <div class="mb-3">
+          <label class="form-label" for="nama">Nama lengkap</label>
+          <input class="form-control" id="nama" name="nama" value="{{ form.nama or '' }}" placeholder="Contoh: Alivia Wahyu Riandini" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-control" id="email" name="email" type="email" value="{{ form.email or '' }}" placeholder="nama@student.uin-malang.ac.id" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="no_kontak">Nomor WhatsApp</label>
+          <input class="form-control" id="no_kontak" name="no_kontak" value="{{ form.no_kontak or '' }}" placeholder="08xx xxxx xxxx" required>
+          <div class="form-text"><i class="bi bi-lock"></i> Hanya dibuka ke pemilik setelah klaim disetujui admin.</div>
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-sm"><label class="form-label" for="password">Kata sandi</label><input class="form-control" id="password" name="password" type="password" placeholder="Minimal 8 karakter" required></div>
+          <div class="col-sm"><label class="form-label" for="password2">Ulangi kata sandi</label><input class="form-control" id="password2" name="password2" type="password" required></div>
+        </div>
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" id="setuju" name="setuju" value="1">
+          <label class="form-check-label small" for="setuju">Saya setuju data saya dipakai untuk proses pengembalian barang.</label>
+        </div>
+        <button class="btn btn-ll w-100">Daftar</button>
+      </form>
+      <p class="text-center mt-4 mb-0">Sudah punya akun? <a href="/login" class="fw-bold">Masuk</a></p>
     </div>
-    <div class="mb-3">
-      <label class="form-label" for="email">Email</label>
-      <input class="form-control" id="email" name="email" type="email" value="{{ form.email or '' }}" placeholder="nama@student.uin-malang.ac.id" required>
-    </div>
-    <div class="mb-3">
-      <label class="form-label" for="no_kontak">Nomor kontak (WhatsApp)</label>
-      <input class="form-control" id="no_kontak" name="no_kontak" value="{{ form.no_kontak or '' }}" placeholder="08xx xxxx xxxx" required>
-      <div class="form-text">Hanya dibuka ke pemilik setelah klaim disetujui admin.</div>
-    </div>
-    <div class="row g-3 mb-3">
-      <div class="col">
-        <label class="form-label" for="password">Kata sandi</label>
-        <input class="form-control" id="password" name="password" type="password" placeholder="Minimal 8 karakter" required>
-      </div>
-      <div class="col">
-        <label class="form-label" for="password2">Ulangi kata sandi</label>
-        <input class="form-control" id="password2" name="password2" type="password" required>
-      </div>
-    </div>
-    <div class="form-check mb-4">
-      <input class="form-check-input" type="checkbox" id="setuju" name="setuju" value="1">
-      <label class="form-check-label small" for="setuju">Saya setuju data saya dipakai untuk proses pengembalian barang.</label>
-    </div>
-    <button class="btn btn-ll w-100">Daftar</button>
-  </form>
-  <p class="text-center mt-4 mb-0">Sudah punya akun? <a href="/login" class="fw-semibold text-dark">Masuk</a></p>
+  </div>
 </div>
 {% endblock %}

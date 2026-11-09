@@ -27,7 +27,7 @@ def rekomendasi_terbaru(user: User = Depends(current_user), db: Session = Depend
 def rekomendasi(item_id: int, request: Request, semua: int = 0, user: User = Depends(current_user), db: Session = Depends(get_db)):
     item = db.get(Item, item_id)
     if item is None or item.user_id != user.id:
-        raise HTTPException(404, "Laporan tidak ditemukan atau bukan milik Anda.")
+        raise HTTPException(404, "Laporan tidak ditemukan atau bukan milikmu.")
     if item.jenis != "hilang":
         return RedirectResponse(f"/laporan/{item.id}", status_code=303)
 
@@ -78,12 +78,12 @@ def ajukan_klaim(request: Request, match_id: int = Form(...), jawaban_ciri: str 
     if lost.status != "Hilang" or found is None or found.status != "Ditemukan":
         raise HTTPException(409, "Barang ini sudah dalam proses verifikasi atau sudah dikembalikan.")
     if len(jawaban_ciri.strip()) < 3:
-        request.session["klaim_error"] = "Tulis jawaban ciri khusus (minimal 3 karakter)."
+        request.session["klaim_error"] = "Jawabannya masih kosong. Tulis satu ciri yang kamu ingat dari barangmu."
         return RedirectResponse(f"/rekomendasi/{lost.id}?klaim={m.id}", status_code=303)
 
     db.add(Verification(match_id=m.id, claimant_id=user.id, jawaban_ciri=jawaban_ciri.strip()))
     lost.status = "Diverifikasi"
     found.status = "Diverifikasi"
     db.commit()
-    request.session["flash"] = "Klaim terkirim. Admin akan mencocokkan jawaban Anda dengan ciri khusus dari penemu."
+    request.session["flash"] = "Klaim terkirim. Admin biasanya memeriksa dalam 1×24 jam; pantau statusnya di halaman ini."
     return RedirectResponse(f"/laporan/{lost.id}", status_code=303)

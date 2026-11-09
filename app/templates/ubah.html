@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Lengkapi laporan · LOSTLINK{% endblock %}
+{% block content %}
+<a href="/laporan/{{ item.id }}" class="small fw-semibold text-decoration-none"><i class="bi bi-arrow-left"></i> Kembali ke laporan</a>
+<h1 class="h2 mt-2 mb-1">Lengkapi laporan</h1>
+<p class="ll-muted">Detail tambahan membantu admin memastikan barang kembali ke orang yang tepat.</p>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <form class="ll-card p-3 p-md-4" method="post" action="/laporan/{{ item.id }}/ubah" novalidate>
+      {% include "_catatan.html" %}
+      <div class="d-flex gap-3 align-items-center mb-4"><img src="/foto/{{ item.path_foto }}" class="ll-thumb" style="width:72px;height:72px" alt=""><div><div class="fw-bold">Laporan barang {{ item.jenis }}</div><div class="ll-muted small">Foto tidak dapat diganti; buat laporan baru bila fotonya keliru.</div></div></div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6"><label class="form-label" for="kategori">Kategori</label><select class="form-select" id="kategori" name="kategori">{% for k in kategori_list %}<option {% if form.kategori == k %}selected{% endif %}>{{ k }}</option>{% endfor %}</select></div>
+        <div class="col-md-6"><label class="form-label" for="waktu">Kira-kira kapan</label><input class="form-control" id="waktu" type="datetime-local" name="waktu" value="{{ form.waktu or '' }}"></div>
+      </div>
+      <div class="mb-3"><label class="form-label" for="lokasi">Lokasi</label><input class="form-control" id="lokasi" name="lokasi" value="{{ form.lokasi or '' }}"></div>
+      <div class="mb-3"><label class="form-label" for="deskripsi">Ciri-ciri yang terlihat</label><textarea class="form-control" id="deskripsi" name="deskripsi" rows="2">{{ form.deskripsi or '' }}</textarea></div>
+      <div class="ll-secret kunci mb-4"><label class="form-label" for="ciri_khusus"><i class="bi bi-lock-fill" style="color:var(--verif)"></i> Ciri khusus (rahasia)</label><input class="form-control" id="ciri_khusus" name="ciri_khusus" value="{{ form.ciri_khusus or '' }}" placeholder="Contoh: ada stiker di bagian dalam"><div class="form-text">Hanya dilihat admin saat memverifikasi klaim.</div></div>
+      <div class="d-flex justify-content-end gap-2 ll-sticky-submit"><a href="/laporan/{{ item.id }}" class="btn btn-ll-outline">Batal</a><button class="btn btn-ll"><i class="bi bi-check2"></i> Simpan perubahan</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

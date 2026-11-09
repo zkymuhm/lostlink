@@ -119,10 +119,30 @@ def test_klaim_ditolak_status_kembali():
 
 def test_validasi_lapor():
     c = akun("Validasi", "val@test.id")
-    r = c.post("/laporan", data={"jenis": "hilang", "kategori": "Tas", "deskripsi": "x", "ciri_khusus": "", "lokasi": "", "waktu": ""})
+    r = c.post("/laporan", data={"jenis": "hilang", "kategori": "", "deskripsi": "", "ciri_khusus": "", "lokasi": "", "waktu": ""})
     assert r.status_code == 400
-    for msg in ["Ciri-ciri umum", "Ciri khusus", "Lokasi wajib", "waktu", "Unggah satu foto"]:
+    for msg in ["Fotonya belum ada", "Pilih kategori", "perkiraan lokasinya", "3 hal"]:
         assert msg in r.text
+    # barang temuan wajib punya ciri khusus
+    r = c.post("/laporan", data={"jenis": "temuan", "kategori": "Tas", "lokasi": "Kantin", "ciri_khusus": ""},
+               files={"foto": ("a.jpg", foto((1, 1, 1)), "image/jpeg")})
+    assert r.status_code == 400 and "ciri khusus yang hanya diketahui" in r.text
+    # barang hilang cukup foto + kategori + lokasi; detail dilengkapi nanti
+    r = c.post("/laporan", data={"jenis": "hilang", "kategori": "Tas", "lokasi": "Kantin"},
+               files={"foto": ("a.jpg", foto((5, 5, 5)), "image/jpeg")})
+    assert r.status_code == 303
+    item_id = int(r.headers["location"].rsplit("/", 1)[1])
+    with SessionLocal() as db:
+        it = db.get(Item, item_id)
+        assert it.deskripsi == "Barang tas di Kantin" and it.ciri_khusus == ""
+    r = c.post(f"/laporan/{item_id}/ubah", data={"kategori": "Tas", "lokasi": "Kantin lantai 2", "deskripsi": "Tas hitam",
+                                                 "ciri_khusus": "ada nama saya", "waktu": WAKTU})
+    assert r.status_code == 303
+    with SessionLocal() as db:
+        it = db.get(Item, item_id)
+        assert it.deskripsi == "Tas hitam" and it.ciri_khusus == "ada nama saya" and it.lokasi == "Kantin lantai 2"
+    lain = akun("Orang lain", "lain@test.id")
+    assert lain.get(f"/laporan/{item_id}/ubah").status_code == 404
     bukan_foto = c.post("/laporan", data={"jenis": "hilang", "kategori": "Tas", "deskripsi": "Tas hitam", "ciri_khusus": "abc",
                                           "lokasi": "Kantin", "waktu": WAKTU}, files={"foto": ("a.jpg", b"bukan gambar", "image/jpeg")})
     assert bukan_foto.status_code == 400 and "bukan foto" in bukan_foto.text
@@ -153,5 +173,5 @@ def test_admin_hapus_laporan_dan_nonaktif():
         uid = db.query(User).filter_by(email="nakal@test.id").one().id
     assert admin.get("/admin/pengguna").status_code == 200
     admin.post(f"/admin/pengguna/{uid}/nonaktif")
-    assert c.get("/").status_code == 303  # sesi lama ikut tidak berlaku
+    assert c.get("/saya").status_code == 303  # sesi lama ikut tidak berlaku
     assert c.post("/login", data={"email": "nakal@test.id", "password": "rahasia123"}).status_code == 401

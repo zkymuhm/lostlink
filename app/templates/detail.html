@@ -4,8 +4,8 @@
 {% block content %}
 {% set urutan = ['Hilang', 'Ditemukan', 'Diverifikasi', 'Dikembalikan'] %}
 {% set posisi = urutan.index(item.status) %}
-<a href="/saya" class="small fw-medium text-dark text-decoration-none">← Kembali ke status laporan</a>
-<div class="d-flex align-items-center gap-3 mt-2"><h1 class="h3 fw-bold mb-0">{{ judul(item) }}</h1>{{ badge(item.status) }}</div>
+<a href="/saya" class="small fw-semibold text-decoration-none"><i class="bi bi-arrow-left"></i> Kembali ke status laporan</a>
+<div class="d-flex align-items-center gap-3 mt-2"><h1 class="h2 mb-0">{{ judul(item) }}</h1>{{ badge(item.status) }}</div>
 <p class="ll-muted">Laporan barang {{ item.jenis }} · dibuat {{ tgl(item.dibuat_pada) }} · ID #{{ '%04d' % item.id }}</p>
 {{ flash_box(flash) }}
 <div class="row g-4">
@@ -21,7 +21,7 @@
   </div>
   <div class="col-lg-7">
     <div class="ll-card p-4 mb-4">
-      <h2 class="h5 fw-bold mb-1">Status barang</h2>
+      <h2 class="h5 mb-1">Status barang</h2>
       <p class="ll-muted small">Pelacakan 4 tahap: Hilang → Ditemukan → Diverifikasi → Dikembalikan</p>
       <div class="ll-steps my-4">
         {% for s in urutan %}
@@ -29,22 +29,36 @@
         <div class="ll-step {{ kelas }}"><div class="dot">{% if kelas == 'done' %}✓{% else %}{{ loop.index }}{% endif %}</div><div class="name">{{ s }}</div></div>
         {% endfor %}
       </div>
+      <div class="ll-next mt-3">
+        <i class="bi bi-signpost-2"></i>
+        <div>
+        {% if item.status == 'Hilang' %}<strong>Langkah berikutnya:</strong> buka Rekomendasi dan ajukan klaim bila ada barangmu. Laporanmu tetap aktif; setiap barang temuan baru ikut dicocokkan saat kamu membukanya lagi.
+        {% elif item.status == 'Ditemukan' %}<strong>Langkah berikutnya:</strong> barang ini menunggu pemiliknya. Pemilik akan menyebutkan ciri khusus, lalu admin memverifikasi.
+        {% elif item.status == 'Diverifikasi' %}<strong>Sedang diperiksa admin.</strong> Admin biasanya memeriksa klaim dalam 1×24 jam. Setelah disetujui, kontak penemu muncul di halaman ini.
+        {% else %}<strong>Barang sudah kembali ke pemiliknya.</strong> Terima kasih sudah memakai LOSTLINK.{% endif %}
+        </div>
+      </div>
       <hr>
       <div class="fw-semibold mb-2">Riwayat</div>
       {% for waktu, teks in riwayat %}
       <div class="d-flex gap-3 small mb-2"><span class="ll-muted" style="width:150px">{{ waktu.strftime('%d %b %Y, %H.%M') if waktu else '' }}</span><span class="fw-medium">{{ teks }}</span></div>
       {% endfor %}
+      <div class="d-flex flex-wrap gap-2 mt-3">
       {% if milik_saya and item.jenis == 'hilang' and item.status == 'Hilang' %}
-      <a href="/rekomendasi/{{ item.id }}" class="btn btn-ll mt-3">Lihat rekomendasi</a>
+      <a href="/rekomendasi/{{ item.id }}" class="btn btn-ll"><i class="bi bi-stars"></i> Lihat rekomendasi</a>
       {% endif %}
+      {% if milik_saya and item.status in ('Hilang', 'Ditemukan') %}
+      <a href="/laporan/{{ item.id }}/ubah" class="btn btn-ll-outline"><i class="bi bi-pencil"></i> Lengkapi detail</a>
+      {% endif %}
+      </div>
     </div>
     {% if milik_saya and item.jenis == 'hilang' %}
     <div class="ll-card p-4">
-      <h2 class="h5 fw-bold">Kontak penemu</h2>
+      <h2 class="h5">Kontak penemu</h2>
       {% if kontak %}
-      <div class="ll-secret"><div class="fw-semibold">{{ kontak.nama }}</div><div>WhatsApp: <strong>{{ kontak.no_kontak }}</strong></div><div class="ll-muted small">Barang ditemukan di {{ kontak.lokasi }}. Hubungi penemu untuk mengambil barang.</div></div>
+      <div class="ll-secret" style="background:var(--temuan-soft)"><div class="fw-bold"><i class="bi bi-person-check-fill" style="color:var(--temuan)"></i> {{ kontak.nama }}</div><div>WhatsApp: <strong>{{ kontak.no_kontak }}</strong></div><div class="ll-muted small">Barang ditemukan di {{ kontak.lokasi }}. Hubungi penemu untuk mengambil barang.</div></div>
       {% else %}
-      <div class="ll-secret d-flex gap-3 align-items-center" style="border-style:dashed"><div class="ll-logo" style="width:36px;height:36px;background:#D4D4D4"></div><div><div class="fw-semibold">Terkunci</div><div class="ll-muted small">Nomor kontak penemu dibuka setelah admin menyetujui pengembalian.</div></div></div>
+      <div class="ll-secret kunci d-flex gap-3 align-items-center"><i class="bi bi-lock-fill fs-3" style="color:var(--verif)"></i><div><div class="fw-semibold">Terkunci</div><div class="ll-muted small">Nomor kontak penemu dibuka setelah admin menyetujui pengembalian, biasanya dalam 1×24 jam setelah klaim.</div></div></div>
       {% endif %}
     </div>
     {% endif %}
