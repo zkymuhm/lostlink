@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.pyc
+.env
+lostlink.db
+test_*.db
+uploads/*
+!uploads/.gitkeep
+uji_kelayakan/data/
+.DS_Store

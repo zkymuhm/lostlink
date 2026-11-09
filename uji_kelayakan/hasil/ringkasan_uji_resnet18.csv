@@ -1,0 +1,12 @@
+Ukuran,Hasil
+Model,resnet18
+Jumlah kueri (foto hilang),25
+Jumlah kandidat (foto temuan + pengecoh),52
+Akurasi top-1,21/25 (84.0%)
+Akurasi top-5,24/25 (96.0%)
+Pembanding: peluang acak top-5,9.6%
+Target T3 (top-5 >= 60%),Tercapai
+Rata-rata waktu per foto (detik),0.355
+Waktu terlama (detik),0.500
+Target waktu (<= 5 detik),Tercapai
+Perangkat,Laptop lokal (CPU)

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Masuk · LOSTLINK{% endblock %}
+{% block body %}
+<div class="ll-card ll-auth">
+  <div class="d-flex align-items-center gap-2 mb-4"><span class="ll-logo"></span><span class="ll-brand">LOSTLINK</span></div>
+  <h1 class="h3 fw-bold mb-1">Masuk</h1>
+  <p class="ll-muted mb-4">Masuk untuk melapor dan melacak barang hilang.</p>
+  {% if info %}<div class="alert alert-secondary py-2">{{ info }}</div>{% endif %}
+  {% if error %}<div class="alert alert-danger py-2">{{ error }}</div>{% endif %}
+  <form method="post" action="/login" novalidate>
+    <div class="mb-3">
+      <label class="form-label" for="email">Email</label>
+      <input class="form-control" id="email" name="email" type="email" value="{{ email }}" placeholder="nama@student.uin-malang.ac.id" required autofocus>
+    </div>
+    <div class="mb-4">
+      <label class="form-label" for="password">Kata sandi</label>
+      <input class="form-control" id="password" name="password" type="password" required>
+    </div>
+    <button class="btn btn-ll w-100">Masuk</button>
+  </form>
+  <p class="text-center mt-4 mb-0">Belum punya akun? <a href="/register" class="fw-semibold text-dark">Daftar</a></p>
+</div>
+<p class="text-center ll-muted small">Pengguna dan admin masuk lewat halaman yang sama; peran ditentukan otomatis setelah login.</p>
+{% endblock %}

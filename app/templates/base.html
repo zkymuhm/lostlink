@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}LOSTLINK{% endblock %}</title>
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+{% block body %}
+<nav class="ll-nav d-flex align-items-center px-4">
+  <a class="ll-brand d-flex align-items-center gap-2" href="/"><span class="ll-logo"></span>LOSTLINK</a>
+  <div class="mx-auto d-flex gap-2">
+    {% for label, url in [("Beranda", "/"), ("Lapor barang", "/lapor"), ("Rekomendasi", "#"), ("Status laporan", "#")] %}
+      <a class="nav-link {% if aktif == label %}active{% endif %}" href="{{ url }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <span class="ll-avatar"></span><strong>{{ user.nama.split(' ')[0] }}</strong>
+    <form method="post" action="/logout" class="ms-2"><button class="btn btn-sm btn-ll-outline">Keluar</button></form>
+  </div>
+</nav>
+<main class="container-xxl py-4 px-4">{% block content %}{% endblock %}</main>
+{% endblock %}
+</body>
+</html>

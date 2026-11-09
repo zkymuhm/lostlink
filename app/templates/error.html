@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ kode }} · LOSTLINK{% endblock %}
+{% block body %}
+<div class="ll-card ll-auth text-center">
+  <h1 class="h2 fw-bold">{{ kode }}</h1>
+  <p class="ll-muted">{{ pesan }}</p>
+  <a class="btn btn-ll" href="/">Kembali ke beranda</a>
+</div>
+{% endblock %}

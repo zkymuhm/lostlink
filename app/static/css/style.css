@@ -1,0 +1,23 @@
+/* Gaya monokrom mengikuti wireframe Figma LOSTLINK */
+:root { --bg:#F2F2F2; --border:#D6D6D6; --dark:#3B3B3B; --text:#1E1E1E; --muted:#6B6B6B; --soft:#ECECEC; }
+body { background:var(--bg); color:var(--text); font-family:Inter, -apple-system, "Segoe UI", sans-serif; font-size:14px; }
+.ll-nav { background:#fff; border-bottom:1px solid var(--border); height:64px; }
+.ll-logo { width:28px; height:28px; background:var(--dark); border-radius:6px; display:inline-block; }
+.ll-brand { font-weight:700; font-size:17px; color:var(--text); text-decoration:none; }
+.ll-nav .nav-link { color:#4A4A4A; font-weight:500; padding:6px 10px; border-radius:6px; }
+.ll-nav .nav-link.active { background:var(--soft); border:1px solid var(--border); color:var(--text); font-weight:600; }
+.ll-avatar { width:28px; height:28px; border-radius:50%; background:var(--soft); border:1px solid var(--border); display:inline-block; }
+.ll-card { background:#fff; border:1px solid var(--border); border-radius:10px; }
+.ll-auth { max-width:440px; margin:80px auto 24px; padding:32px; }
+.ll-muted { color:var(--muted); }
+.form-label { font-weight:500; font-size:12px; margin-bottom:4px; }
+.form-control { border-color:var(--border); border-radius:6px; padding:8px 12px; font-size:13px; }
+.form-control:focus { border-color:var(--dark); box-shadow:0 0 0 .15rem rgba(59,59,59,.15); }
+.btn-ll { background:var(--dark); color:#fff; border-radius:6px; font-weight:600; padding:9px 16px; }
+.btn-ll:hover { background:#222; color:#fff; }
+.btn-ll-outline { background:#fff; border:1px solid var(--border); color:var(--text); border-radius:6px; font-weight:600; }
+.ll-side { width:240px; min-height:100vh; background:var(--dark); padding:28px 16px; }
+.ll-side .brand { color:#fff; font-weight:700; font-size:17px; padding:0 8px 24px; }
+.ll-side a, .ll-side button { display:block; width:100%; text-align:left; color:#fff; font-weight:600; padding:10px 12px; border-radius:6px; text-decoration:none; background:none; border:0; margin-bottom:6px; }
+.ll-side a.active { background:#A6A6A6; }
+.ll-hero { background:#E3E3E3; border-radius:12px; padding:28px; }
