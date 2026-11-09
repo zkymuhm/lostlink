@@ -11,6 +11,9 @@ torch==2.2.2
 torchvision==0.17.2
 numpy<2
 pillow
+# uji kelayakan (uji_kelayakan/lostlink_uji.py)
+pandas
+matplotlib
 # pengujian
 pytest
 httpx
