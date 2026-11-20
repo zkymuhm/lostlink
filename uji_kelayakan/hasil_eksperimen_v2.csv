@@ -1,0 +1,71 @@
+varian,top1,top5,rata_peringkat,detik_per_foto,skor_benar,skor_salah_rata,p95_salah,gagal
+foto efficientnet_b0 asli,90.0,100.0,1.2,0.1006,0.4949,-0.0188,0.1564,14_deodoran#2 15_sabun#2 25_gelas#5
+foto efficientnet_b0 tanpa_latar,86.6667,100.0,1.3333,0.1005,0.5194,-0.0171,0.1651,14_deodoran#2 20_parfum_merah#4 25_gelas#5 30_cukuran#3
+foto dinov2_small asli,86.6667,100.0,1.2,0.2603,0.6386,-0.0189,0.1888,10_dompet_kulit#3 23_keyboard#2 25_gelas#3 30_cukuran#2
+foto dinov2_small tanpa_latar,83.3333,100.0,1.3333,0.2641,0.6366,-0.0183,0.1943,10_dompet_kulit#3 20_parfum_merah#2 23_keyboard#2 25_gelas#4 30_cukuran#4
+foto clip asli,93.3333,96.6667,1.2667,0.163,0.6309,-0.0202,0.2072,12_parfum_hitam#6 25_gelas#4
+foto clip tanpa_latar,83.3333,90.0,2.4667,0.1579,0.588,-0.0153,0.2388,12_parfum_hitam#18 20_parfum_merah#6 23_keyboard#3 25_gelas#19 30_cukuran#3
+[mirip] teks_teks saja,100.0,100.0,1.0,,0.9824,0.795,0.8996,
+[mirip] teks_foto saja,56.6667,96.6667,1.9667,,0.2856,0.2137,0.2569,02_tang#5 04_hp#2 05_pulpen#4 07_cat_akrilik#2 12_parfum_hitam#11 14_deodoran#2 20_parfum_merah#2 21_boneka#3 23_keyboard#2 24_case_earbud#2 25_gelas#2 27_lotion#3 28_stylus#2
+[mirip] efficientnet_b0 asli + teks w=0.1,93.3333,100.0,1.1,,4.063,-0.0726,1.3211,14_deodoran#2 25_gelas#3
+[mirip] efficientnet_b0 asli + teks w=0.2,96.6667,100.0,1.0667,,3.893,-0.0695,1.2431,25_gelas#3
+[mirip] efficientnet_b0 asli + teks w=0.3,100.0,100.0,1.0,,3.723,-0.0665,1.1791,
+[mirip] efficientnet_b0 asli + teks w=0.4,100.0,100.0,1.0,,3.553,-0.0634,1.0913,
+[mirip] efficientnet_b0 asli + teks w=0.5,100.0,100.0,1.0,,3.383,-0.0604,1.0481,
+[mirip] efficientnet_b0 tanpa_latar + teks w=0.1,86.6667,100.0,1.2333,,4.1041,-0.0733,1.3038,14_deodoran#2 20_parfum_merah#4 25_gelas#3 30_cukuran#2
+[mirip] efficientnet_b0 tanpa_latar + teks w=0.2,86.6667,100.0,1.2333,,3.9295,-0.0702,1.1938,14_deodoran#2 20_parfum_merah#4 25_gelas#3 30_cukuran#2
+[mirip] efficientnet_b0 tanpa_latar + teks w=0.3,93.3333,100.0,1.1333,,3.755,-0.0671,1.1244,20_parfum_merah#3 25_gelas#3
+[mirip] efficientnet_b0 tanpa_latar + teks w=0.4,96.6667,100.0,1.0333,,3.5804,-0.0639,1.0449,20_parfum_merah#2
+[mirip] efficientnet_b0 tanpa_latar + teks w=0.5,96.6667,100.0,1.0333,,3.4059,-0.0608,0.9915,20_parfum_merah#2
+[mirip] dinov2_small asli + teks w=0.1,90.0,100.0,1.1,,4.2656,-0.0762,1.2568,10_dompet_kulit#2 23_keyboard#2 25_gelas#2
+[mirip] dinov2_small asli + teks w=0.2,90.0,100.0,1.1,,4.0731,-0.0727,1.1531,10_dompet_kulit#2 23_keyboard#2 25_gelas#2
+[mirip] dinov2_small asli + teks w=0.3,90.0,100.0,1.1,,3.8806,-0.0693,1.0815,10_dompet_kulit#2 23_keyboard#2 25_gelas#2
+[mirip] dinov2_small asli + teks w=0.4,90.0,100.0,1.1,,3.6881,-0.0659,1.0362,10_dompet_kulit#2 20_parfum_merah#2 23_keyboard#2
+[mirip] dinov2_small asli + teks w=0.5,90.0,100.0,1.1,,3.4956,-0.0624,0.9821,10_dompet_kulit#2 20_parfum_merah#2 23_keyboard#2
+[mirip] dinov2_small tanpa_latar + teks w=0.1,83.3333,100.0,1.3,,4.1635,-0.0743,1.2873,10_dompet_kulit#3 20_parfum_merah#2 23_keyboard#2 25_gelas#3 30_cukuran#4
+[mirip] dinov2_small tanpa_latar + teks w=0.2,83.3333,100.0,1.2333,,3.9823,-0.0711,1.2223,10_dompet_kulit#3 20_parfum_merah#2 23_keyboard#2 25_gelas#3 30_cukuran#2
+[mirip] dinov2_small tanpa_latar + teks w=0.3,86.6667,100.0,1.2,,3.8012,-0.0679,1.1059,10_dompet_kulit#3 20_parfum_merah#2 23_keyboard#2 25_gelas#3
+[mirip] dinov2_small tanpa_latar + teks w=0.4,90.0,100.0,1.1,,3.62,-0.0646,1.0639,10_dompet_kulit#2 20_parfum_merah#2 23_keyboard#2
+[mirip] dinov2_small tanpa_latar + teks w=0.5,90.0,100.0,1.1,,3.4389,-0.0614,0.9961,10_dompet_kulit#2 20_parfum_merah#2 23_keyboard#2
+[mirip] clip asli + teks w=0.1,93.3333,100.0,1.2,,3.8956,-0.0696,1.2766,12_parfum_hitam#5 25_gelas#3
+[mirip] clip asli + teks w=0.2,96.6667,100.0,1.1,,3.7443,-0.0669,1.2164,12_parfum_hitam#4
+[mirip] clip asli + teks w=0.3,96.6667,100.0,1.0667,,3.5929,-0.0642,1.1668,12_parfum_hitam#3
+[mirip] clip asli + teks w=0.4,96.6667,100.0,1.0667,,3.4415,-0.0615,1.0906,12_parfum_hitam#3
+[mirip] clip asli + teks w=0.5,96.6667,100.0,1.1,,3.2901,-0.0588,1.0425,12_parfum_hitam#4
+[mirip] clip tanpa_latar + teks w=0.1,83.3333,93.3333,1.9,,3.5579,-0.0635,1.3961,12_parfum_hitam#16 20_parfum_merah#3 23_keyboard#3 25_gelas#8 30_cukuran#2
+[mirip] clip tanpa_latar + teks w=0.2,83.3333,96.6667,1.5,,3.4441,-0.0615,1.3121,12_parfum_hitam#12 20_parfum_merah#2 23_keyboard#2 25_gelas#2 30_cukuran#2
+[mirip] clip tanpa_latar + teks w=0.3,83.3333,96.6667,1.3667,,3.3302,-0.0595,1.2272,12_parfum_hitam#8 20_parfum_merah#2 23_keyboard#2 25_gelas#2 30_cukuran#2
+[mirip] clip tanpa_latar + teks w=0.4,86.6667,96.6667,1.2667,,3.2163,-0.0574,1.1371,12_parfum_hitam#6 20_parfum_merah#2 23_keyboard#2 30_cukuran#2
+[mirip] clip tanpa_latar + teks w=0.5,86.6667,100.0,1.2333,,3.1025,-0.0554,1.0826,12_parfum_hitam#5 20_parfum_merah#2 23_keyboard#2 30_cukuran#2
+[beda] teks_teks saja,26.6667,66.6667,10.0667,,0.8801,0.8116,0.9108,01_kuas#14 02_tang#7 04_hp#5 05_pulpen#4 07_cat_akrilik#4 08_sepatu_biru#3 09_gantungan_mobil#10 11_lanyard#52 12_parfum_hitam#22 13_rubik#2 14_deodoran#46 15_sabun#2 16_dompet_anyaman#2 18_pouch#24 20_parfum_merah#2 21_boneka#2 23_keyboard#37 24_case_earbud#2 26_kipas_mini#11 27_lotion#33 29_gelas_stainless#5 30_cukuran#5
+[beda] teks_foto saja,36.6667,86.6667,3.7333,,0.2689,0.216,0.258,02_tang#3 04_hp#2 07_cat_akrilik#3 09_gantungan_mobil#5 11_lanyard#2 12_parfum_hitam#15 14_deodoran#2 15_sabun#5 18_pouch#4 20_parfum_merah#4 21_boneka#2 23_keyboard#17 24_case_earbud#3 25_gelas#2 26_kipas_mini#5 27_lotion#14 28_stylus#2 29_gelas_stainless#2 30_cukuran#9
+[beda] efficientnet_b0 asli + teks w=0.1,86.6667,100.0,1.1667,,3.954,-0.0706,1.3159,08_sepatu_biru#2 14_deodoran#2 15_sabun#2 25_gelas#3
+[beda] efficientnet_b0 asli + teks w=0.2,86.6667,100.0,1.1667,,3.675,-0.0656,1.2414,08_sepatu_biru#2 14_deodoran#2 25_gelas#3 30_cukuran#2
+[beda] efficientnet_b0 asli + teks w=0.3,86.6667,100.0,1.1667,,3.396,-0.0606,1.1618,08_sepatu_biru#2 14_deodoran#2 25_gelas#3 30_cukuran#2
+[beda] efficientnet_b0 asli + teks w=0.4,86.6667,100.0,1.1333,,3.1171,-0.0557,1.0888,08_sepatu_biru#2 14_deodoran#2 25_gelas#2 30_cukuran#2
+[beda] efficientnet_b0 asli + teks w=0.5,86.6667,100.0,1.1333,,2.8381,-0.0507,1.079,08_sepatu_biru#2 14_deodoran#2 25_gelas#2 30_cukuran#2
+[beda] efficientnet_b0 tanpa_latar + teks w=0.1,86.6667,100.0,1.2667,,3.9951,-0.0713,1.3254,14_deodoran#2 20_parfum_merah#4 25_gelas#3 30_cukuran#3
+[beda] efficientnet_b0 tanpa_latar + teks w=0.2,86.6667,100.0,1.2333,,3.7116,-0.0663,1.2101,14_deodoran#2 20_parfum_merah#4 25_gelas#3 30_cukuran#2
+[beda] efficientnet_b0 tanpa_latar + teks w=0.3,86.6667,100.0,1.2667,,3.428,-0.0612,1.1571,14_deodoran#3 20_parfum_merah#4 25_gelas#3 30_cukuran#2
+[beda] efficientnet_b0 tanpa_latar + teks w=0.4,83.3333,100.0,1.3,,3.1445,-0.0562,1.0952,08_sepatu_biru#2 14_deodoran#3 20_parfum_merah#4 25_gelas#3 30_cukuran#2
+[beda] efficientnet_b0 tanpa_latar + teks w=0.5,83.3333,100.0,1.2667,,2.8609,-0.0511,1.0234,08_sepatu_biru#2 14_deodoran#3 20_parfum_merah#4 25_gelas#2 30_cukuran#2
+[beda] dinov2_small asli + teks w=0.1,90.0,100.0,1.1333,,4.1566,-0.0742,1.2665,10_dompet_kulit#2 23_keyboard#2 25_gelas#3
+[beda] dinov2_small asli + teks w=0.2,90.0,100.0,1.1333,,3.8551,-0.0688,1.162,10_dompet_kulit#2 23_keyboard#2 25_gelas#3
+[beda] dinov2_small asli + teks w=0.3,90.0,100.0,1.1,,3.5536,-0.0635,1.0865,10_dompet_kulit#2 23_keyboard#2 25_gelas#2
+[beda] dinov2_small asli + teks w=0.4,86.6667,100.0,1.1333,,3.2521,-0.0581,1.0006,08_sepatu_biru#2 10_dompet_kulit#2 23_keyboard#2 25_gelas#2
+[beda] dinov2_small asli + teks w=0.5,86.6667,100.0,1.1333,,2.9507,-0.0527,0.9872,08_sepatu_biru#2 10_dompet_kulit#2 23_keyboard#2 25_gelas#2
+[beda] dinov2_small tanpa_latar + teks w=0.1,83.3333,100.0,1.3333,,4.0545,-0.0724,1.2818,10_dompet_kulit#3 20_parfum_merah#2 23_keyboard#2 25_gelas#4 30_cukuran#4
+[beda] dinov2_small tanpa_latar + teks w=0.2,83.3333,100.0,1.3,,3.7643,-0.0672,1.2179,10_dompet_kulit#3 20_parfum_merah#2 23_keyboard#2 25_gelas#3 30_cukuran#4
+[beda] dinov2_small tanpa_latar + teks w=0.3,83.3333,100.0,1.2667,,3.4742,-0.062,1.1522,10_dompet_kulit#3 20_parfum_merah#2 23_keyboard#2 25_gelas#3 30_cukuran#3
+[beda] dinov2_small tanpa_latar + teks w=0.4,83.3333,100.0,1.2333,,3.1841,-0.0569,1.0969,10_dompet_kulit#2 20_parfum_merah#2 23_keyboard#2 25_gelas#3 30_cukuran#3
+[beda] dinov2_small tanpa_latar + teks w=0.5,83.3333,100.0,1.2333,,2.8939,-0.0517,1.0478,10_dompet_kulit#2 20_parfum_merah#2 23_keyboard#2 25_gelas#3 30_cukuran#3
+[beda] clip asli + teks w=0.1,93.3333,96.6667,1.2667,,3.7867,-0.0676,1.2719,12_parfum_hitam#6 25_gelas#4
+[beda] clip asli + teks w=0.2,93.3333,96.6667,1.2,,3.5263,-0.063,1.2347,12_parfum_hitam#6 25_gelas#2
+[beda] clip asli + teks w=0.3,93.3333,96.6667,1.2,,3.2659,-0.0583,1.1867,12_parfum_hitam#6 25_gelas#2
+[beda] clip asli + teks w=0.4,96.6667,96.6667,1.1667,,3.0055,-0.0537,1.1504,12_parfum_hitam#6
+[beda] clip asli + teks w=0.5,93.3333,96.6667,1.2,,2.7452,-0.049,1.1292,12_parfum_hitam#6 14_deodoran#2
+[beda] clip tanpa_latar + teks w=0.1,83.3333,93.3333,2.1,,3.4489,-0.0616,1.4263,12_parfum_hitam#18 20_parfum_merah#3 23_keyboard#3 25_gelas#11 30_cukuran#3
+[beda] clip tanpa_latar + teks w=0.2,83.3333,93.3333,1.9333,,3.2261,-0.0576,1.3302,12_parfum_hitam#17 20_parfum_merah#2 23_keyboard#3 25_gelas#8 30_cukuran#3
+[beda] clip tanpa_latar + teks w=0.3,83.3333,96.6667,1.7333,,3.0032,-0.0536,1.2544,12_parfum_hitam#16 20_parfum_merah#2 23_keyboard#3 25_gelas#3 30_cukuran#3
+[beda] clip tanpa_latar + teks w=0.4,83.3333,96.6667,1.6333,,2.7804,-0.0496,1.1903,12_parfum_hitam#14 20_parfum_merah#2 23_keyboard#3 25_gelas#3 30_cukuran#2
+[beda] clip tanpa_latar + teks w=0.5,83.3333,96.6667,1.5667,,2.5575,-0.0457,1.1335,12_parfum_hitam#12 20_parfum_merah#2 23_keyboard#3 25_gelas#3 30_cukuran#2

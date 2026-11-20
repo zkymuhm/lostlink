@@ -1,0 +1,9 @@
+model,kondisi,top1,top5,rata_peringkat,detik_per_foto,gagal
+efficientnet_b0,asli,90.0,100.0,1.2,0.0742,08_sepatu_biru#2 14_deodoran#2 25_gelas#5
+efficientnet_b0,barang,76.6667,96.6667,1.4333,0.0717,08_sepatu_biru#2 10_dompet_kulit#2 12_parfum_hitam#2 14_deodoran#2 20_parfum_merah#4 25_gelas#6 30_cukuran#2
+siglip2_base,asli,100.0,100.0,1.0,0.3432,
+siglip2_base,barang,93.3333,100.0,1.1667,0.3764,20_parfum_merah#3 25_gelas#4
+convnextv2_base,asli,93.3333,100.0,1.1333,0.5216,20_parfum_merah#4 25_gelas#2
+convnextv2_base,barang,90.0,100.0,1.2,0.5578,12_parfum_hitam#2 20_parfum_merah#2 25_gelas#5
+vit_b16_swag,asli,86.6667,100.0,1.2333,1.1319,10_dompet_kulit#2 12_parfum_hitam#4 20_parfum_merah#3 23_keyboard#2
+vit_b16_swag,barang,93.3333,96.6667,1.4333,1.236,20_parfum_merah#10 25_gelas#5

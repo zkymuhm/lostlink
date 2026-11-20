@@ -1,0 +1,158 @@
+== Mon Nov 16 16:48:05 WIB 2026 ==
+== 1/3 Memasang sentence-transformers (versi dikunci agar torch & numpy tidak berubah) ==
+
+[notice] A new release of pip is available: 24.0 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+OK
+== 2/3 Memasang rembg (opsional) ==
+  error: subprocess-exited-with-error
+  
+  × Building wheel for llvmlite (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [86 lines of output]
+      /private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/_vendor/wheel/bdist_wheel.py:4: FutureWarning: The 'wheel' package is no longer the canonical location of the 'bdist_wheel' command, and will be removed in a future release. Please update to setuptools v70.1 or later which contains an integrated version of this command.
+        warn(
+      running bdist_wheel
+      -- The C compiler identification is AppleClang 14.0.0.14000029
+      -- The CXX compiler identification is AppleClang 14.0.0.14000029
+      -- Detecting C compiler ABI info
+      -- Detecting C compiler ABI info - done
+      -- Check for working C compiler: /usr/bin/cc - skipped
+      -- Detecting C compile features
+      -- Detecting C compile features - done
+      -- Detecting CXX compiler ABI info
+      -- Detecting CXX compiler ABI info - done
+      -- Check for working CXX compiler: /usr/bin/c++ - skipped
+      -- Detecting CXX compile features
+      -- Detecting CXX compile features - done
+      CMake Error at CMakeLists.txt:21 (find_package):
+        Could not find a package configuration file provided by "LLVM" with any of
+        the following names:
+      
+          LLVM.cps
+          llvm.cps
+          LLVMConfig.cmake
+          llvm-config.cmake
+      
+        Add the installation prefix of "LLVM" to CMAKE_PREFIX_PATH or set
+        "LLVM_DIR" to a directory containing one of the above files.  If "LLVM"
+        provides a separate development package or SDK, be sure it has been
+        installed.
+      
+      
+      -- Configuring incomplete, errors occurred!
+      Running: cmake -G Unix Makefiles /private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-install-j5zd0zy7/llvmlite_742ac7c3f6f44a9c953e985423bd321b/ffi
+      Traceback (most recent call last):
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-install-j5zd0zy7/llvmlite_742ac7c3f6f44a9c953e985423bd321b/ffi/build.py", line 234, in <module>
+          main()
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-install-j5zd0zy7/llvmlite_742ac7c3f6f44a9c953e985423bd321b/ffi/build.py", line 228, in main
+          main_posix('.dylib')
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-install-j5zd0zy7/llvmlite_742ac7c3f6f44a9c953e985423bd321b/ffi/build.py", line 214, in main_posix
+          try_cmake(here_dir, build_dir, generator)
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-install-j5zd0zy7/llvmlite_742ac7c3f6f44a9c953e985423bd321b/ffi/build.py", line 139, in try_cmake
+          subprocess.check_call(args)
+        File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py", line 413, in check_call
+          raise CalledProcessError(retcode, cmd)
+      subprocess.CalledProcessError: Command '['cmake', '-G', 'Unix Makefiles', '/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-install-j5zd0zy7/llvmlite_742ac7c3f6f44a9c953e985423bd321b/ffi']' returned non-zero exit status 1.
+      Traceback (most recent call last):
+        File "/Users/arch/development/lostlink/venv/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 353, in <module>
+          main()
+        File "/Users/arch/development/lostlink/venv/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 335, in main
+          json_out['return_val'] = hook(**hook_input['kwargs'])
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/arch/development/lostlink/venv/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 251, in build_wheel
+          return _build_backend().build_wheel(wheel_directory, config_settings,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/build_meta.py", line 441, in build_wheel
+          return _build(['bdist_wheel', '--dist-info-dir', str(metadata_directory)])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/build_meta.py", line 429, in _build
+          return self._build_with_temp_dir(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/build_meta.py", line 410, in _build_with_temp_dir
+          self.run_setup()
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/build_meta.py", line 520, in run_setup
+          super().run_setup(setup_script=setup_script)
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/build_meta.py", line 317, in run_setup
+          exec(code, locals())  # noqa: S102 # exec is intentional here
+          ^^^^^^^^^^^^^^^^^^^^
+        File "<string>", line 200, in <module>
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/__init__.py", line 117, in setup
+          return distutils.core.setup(**attrs)  # type: ignore[return-value]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/_distutils/core.py", line 168, in setup
+          return run_commands(dist)
+                 ^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/_distutils/core.py", line 184, in run_commands
+          dist.run_commands()
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/_distutils/dist.py", line 1028, in run_commands
+          self.run_command(cmd)
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/dist.py", line 1106, in run_command
+          super().run_command(command)
+        File "/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-build-env-v4mnc8fo/overlay/lib/python3.11/site-packages/setuptools/_distutils/dist.py", line 1047, in run_command
+          cmd_obj.run()
+        File "<string>", line 170, in run
+        File "<string>", line 62, in build_library_files
+        File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py", line 571, in run
+          raise CalledProcessError(retcode, process.args,
+      subprocess.CalledProcessError: Command '['/Users/arch/development/lostlink/venv/bin/python3.11', '/private/var/folders/xs/wcyx749x6kz1n7shpz_gw4p00000gn/T/pip-install-j5zd0zy7/llvmlite_742ac7c3f6f44a9c953e985423bd321b/ffi/build.py']' returned non-zero exit status 1.
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for llvmlite
+ERROR: Could not build wheels for llvmlite, which is required to install pyproject.toml-based projects
+
+[notice] A new release of pip is available: 24.0 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+rembg gagal dipasang: varian tanpa_latar dilewati
+torch 2.2.2 | numpy 1.26.4
+== 3/3 Eksperimen ==
+30 foto hilang, 57 foto temuan. Memuat foto ...
+rembg belum terpasang: varian tanpa_latar dilewati.
+
+Memuat efficientnet_b0 ...
+  foto efficientnet_b0 asli                    top1  90.0%  top5 100.0%  rata-peringkat 1.20  0.10 dtk | gagal: 14_deodoran#2 15_sabun#2 25_gelas#5
+
+Memuat dinov2_small ...
+  foto dinov2_small asli                       top1  86.7%  top5 100.0%  rata-peringkat 1.20  0.24 dtk | gagal: 10_dompet_kulit#3 23_keyboard#2 25_gelas#3 30_cukuran#2
+
+Memuat clip ...
+  foto clip asli                               top1  93.3%  top5  96.7%  rata-peringkat 1.27  0.16 dtk | gagal: 12_parfum_hitam#6 25_gelas#4
+
+Memuat model teks multibahasa (paham bahasa Indonesia) ...
+
+--- Skenario keterangan MIRIP: 30/30 pemilik, 57/57 penemu ---
+  [mirip] teks_teks saja                       top1 100.0%  top5 100.0%  rata-peringkat 1.00 | gagal: -
+  [mirip] teks_foto saja                       top1  56.7%  top5  96.7%  rata-peringkat 1.97 | gagal: 02_tang#5 04_hp#2 05_pulpen#4 07_cat_akrilik#2 12_parfum_hitam#11 14_deodoran#2 20_parfum_merah#2 21_boneka#3 23_keyboard#2 24_case_earbud#2 25_gelas#2 27_lotion#3 28_stylus#2
+  [mirip] efficientnet_b0 asli + teks w=0.3    top1 100.0%  top5 100.0%  rata-peringkat 1.00 | gagal: -
+  [mirip] dinov2_small asli + teks w=0.1       top1  90.0%  top5 100.0%  rata-peringkat 1.10 | gagal: 10_dompet_kulit#2 23_keyboard#2 25_gelas#2
+  [mirip] clip asli + teks w=0.3               top1  96.7%  top5 100.0%  rata-peringkat 1.07 | gagal: 12_parfum_hitam#3
+
+--- Skenario keterangan BEDA: 30/30 pemilik, 57/57 penemu ---
+  [beda] teks_teks saja                        top1  26.7%  top5  66.7%  rata-peringkat 10.07 | gagal: 01_kuas#14 02_tang#7 04_hp#5 05_pulpen#4 07_cat_akrilik#4 08_sepatu_biru#3 09_gantungan_mobil#10 11_lanyard#52 12_parfum_hitam#22 13_rubik#2 14_deodoran#46 15_sabun#2 16_dompet_anyaman#2 18_pouch#24 20_parfum_merah#2 21_boneka#2 23_keyboard#37 24_case_earbud#2 26_kipas_mini#11 27_lotion#33 29_gelas_stainless#5 30_cukuran#5
+  [beda] teks_foto saja                        top1  36.7%  top5  86.7%  rata-peringkat 3.73 | gagal: 02_tang#3 04_hp#2 07_cat_akrilik#3 09_gantungan_mobil#5 11_lanyard#2 12_parfum_hitam#15 14_deodoran#2 15_sabun#5 18_pouch#4 20_parfum_merah#4 21_boneka#2 23_keyboard#17 24_case_earbud#3 25_gelas#2 26_kipas_mini#5 27_lotion#14 28_stylus#2 29_gelas_stainless#2 30_cukuran#9
+  [beda] efficientnet_b0 asli + teks w=0.4     top1  86.7%  top5 100.0%  rata-peringkat 1.13 | gagal: 08_sepatu_biru#2 14_deodoran#2 25_gelas#2 30_cukuran#2
+  [beda] dinov2_small asli + teks w=0.3        top1  90.0%  top5 100.0%  rata-peringkat 1.10 | gagal: 10_dompet_kulit#2 23_keyboard#2 25_gelas#2
+  [beda] clip asli + teks w=0.4                top1  96.7%  top5  96.7%  rata-peringkat 1.17 | gagal: 12_parfum_hitam#6
+
+=== 5 VARIAN TERBAIK: FOTO SAJA ===
+  foto clip asli                               top1  93.3%  top5  96.7%  rata-peringkat 1.27  0.16 dtk | gagal: 12_parfum_hitam#6 25_gelas#4
+  foto efficientnet_b0 asli                    top1  90.0%  top5 100.0%  rata-peringkat 1.20  0.10 dtk | gagal: 14_deodoran#2 15_sabun#2 25_gelas#5
+  foto dinov2_small asli                       top1  86.7%  top5 100.0%  rata-peringkat 1.20  0.24 dtk | gagal: 10_dompet_kulit#3 23_keyboard#2 25_gelas#3 30_cukuran#2
+
+=== 5 VARIAN TERBAIK: FOTO + KETERANGAN MIRIP ===
+  [mirip] teks_teks saja                       top1 100.0%  top5 100.0%  rata-peringkat 1.00 | gagal: -
+  [mirip] efficientnet_b0 asli + teks w=0.3    top1 100.0%  top5 100.0%  rata-peringkat 1.00 | gagal: -
+  [mirip] efficientnet_b0 asli + teks w=0.4    top1 100.0%  top5 100.0%  rata-peringkat 1.00 | gagal: -
+  [mirip] efficientnet_b0 asli + teks w=0.5    top1 100.0%  top5 100.0%  rata-peringkat 1.00 | gagal: -
+  [mirip] efficientnet_b0 asli + teks w=0.2    top1  96.7%  top5 100.0%  rata-peringkat 1.07 | gagal: 25_gelas#3
+
+=== 5 VARIAN TERBAIK: FOTO + KETERANGAN BEDA ===
+  [beda] clip asli + teks w=0.4                top1  96.7%  top5  96.7%  rata-peringkat 1.17 | gagal: 12_parfum_hitam#6
+  [beda] clip asli + teks w=0.2                top1  93.3%  top5  96.7%  rata-peringkat 1.20 | gagal: 12_parfum_hitam#6 25_gelas#2
+  [beda] clip asli + teks w=0.3                top1  93.3%  top5  96.7%  rata-peringkat 1.20 | gagal: 12_parfum_hitam#6 25_gelas#2
+  [beda] clip asli + teks w=0.5                top1  93.3%  top5  96.7%  rata-peringkat 1.20 | gagal: 12_parfum_hitam#6 14_deodoran#2
+  [beda] clip asli + teks w=0.1                top1  93.3%  top5  96.7%  rata-peringkat 1.27 | gagal: 12_parfum_hitam#6 25_gelas#4
+
+Tersimpan: /Users/arch/development/lostlink/uji_kelayakan/hasil_eksperimen_v2.csv
+== SELESAI Mon Nov 16 17:38:02 WIB 2026 ==
