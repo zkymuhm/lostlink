@@ -1,0 +1,10 @@
+{
+  "model": "siglip2_base",
+  "skor_dasar": 0.1744,
+  "skor_penuh": 0.857,
+  "rata_pasangan_benar": 0.7,
+  "p95_pasangan_salah": 0.1744,
+  "jumlah_pasangan": 30,
+  "top1": 100.0,
+  "top5": 100.0
+}

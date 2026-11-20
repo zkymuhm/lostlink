@@ -8,3 +8,8 @@ uploads/*
 !uploads/.gitkeep
 uji_kelayakan/data/
 .DS_Store
+cadangan/
+uji_kelayakan/cache_tanpa_latar/
+uji_kelayakan/cache_rgba/
+uji_kelayakan/hasil_v3_latar/
+venv_eksperimen/

@@ -10,6 +10,8 @@ bcrypt==4.0.1
 torch==2.2.2
 torchvision==0.17.2
 numpy<2
+# model SigLIP 2 (bawaan sejak 20 Nov 2026); 4.57.6 terbukti jalan dengan torch 2.2.2 di Mac Intel
+transformers==4.57.6
 pillow
 # uji kelayakan (uji_kelayakan/lostlink_uji.py)
 pandas
