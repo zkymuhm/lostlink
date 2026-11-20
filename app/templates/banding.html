@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, judul %}
+{% block title %}Bandingkan · LOSTLINK{% endblock %}
+{% block content %}
+{% set tl = tingkat_mirip(skor) %}{% set pm = persen_mirip(skor) %}
+{% set bisa_klaim = item.status == 'Hilang' and found.status == 'Ditemukan' and not pending %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+  <a href="/rekomendasi/{{ item.id }}" class="ll-kembali"><i class="bi bi-arrow-left"></i> Kembali ke rekomendasi</a>
+  {% if nav.total %}
+  <div class="ll-banding-nav">
+    {% if nav.sebelum %}<a class="btn btn-sm btn-ll-outline" href="/rekomendasi/{{ item.id }}/banding/{{ nav.sebelum }}" aria-label="Barang sebelumnya"><i class="bi bi-chevron-left"></i></a>{% else %}<span class="btn btn-sm btn-ll-outline disabled" aria-hidden="true"><i class="bi bi-chevron-left"></i></span>{% endif %}
+    <span class="small ll-muted">{{ nav.posisi }} dari {{ nav.total }}</span>
+    {% if nav.berikut %}<a class="btn btn-sm btn-ll-outline" href="/rekomendasi/{{ item.id }}/banding/{{ nav.berikut }}" aria-label="Barang berikutnya"><i class="bi bi-chevron-right"></i></a>{% else %}<span class="btn btn-sm btn-ll-outline disabled" aria-hidden="true"><i class="bi bi-chevron-right"></i></span>{% endif %}
+  </div>
+  {% endif %}
+</div>
+<h1 class="h3 mb-3">Apakah ini barangmu?</h1>
+
+<div class="ll-card p-3 p-md-4 mb-3">
+  <div class="ll-banding">
+    <figure class="ll-banding-foto">
+      <figcaption><span class="ll-banding-tag hilang">Barangmu</span> {{ judul(item) }}</figcaption>
+      <a href="/foto/{{ item.path_foto }}" target="_blank" rel="noopener" title="Buka foto ukuran penuh"><img src="/foto/{{ item.path_foto }}" alt="Foto barangmu"></a>
+    </figure>
+    <figure class="ll-banding-foto">
+      <figcaption><span class="ll-banding-tag temuan">Ditemukan</span> {{ judul(found) }}</figcaption>
+      <a href="/foto/{{ found.path_foto }}" target="_blank" rel="noopener" title="Buka foto ukuran penuh"><img src="/foto/{{ found.path_foto }}" alt="Foto barang temuan"></a>
+    </figure>
+  </div>
+  <p class="small ll-muted text-center mt-2 mb-3"><i class="bi bi-zoom-in"></i> Ketuk foto untuk melihat ukuran penuh. Perhatikan bentuk, warna, logo, dan bagian yang khas.</p>
+
+  <div class="ll-banding-skor">
+    <div class="d-flex justify-content-between align-items-center"><span class="ll-mirip {{ tl[1] }}">{{ tl[0] }}</span><strong class="fs-4">{{ pm }}%</strong></div>
+    <div class="ll-bar {{ tl[1] }} mt-1"><div style="width:{{ pm }}%"></div></div>
+    <div class="small mt-2 d-flex flex-wrap gap-1"><span class="ll-mirip sedang"><i class="bi bi-image"></i> foto {{ persen_mirip(skor_foto) }}%</span>{% for a in alasan %}<span class="ll-mirip tinggi"><i class="bi bi-plus"></i>{{ a }}</span>{% endfor %}</div>
+  </div>
+</div>
+
+<div class="ll-card p-3 p-md-4 mb-3">
+  <h2 class="h6 mb-3">Data kedua laporan</h2>
+  <div class="table-responsive">
+  <table class="table ll-banding-tabel mb-0">
+    <thead><tr><th></th><th>Barangmu</th><th>Barang temuan</th></tr></thead>
+    <tbody>
+      <tr><th>Nama</th><td>{{ item.nama or '—' }}</td><td>{{ found.nama or '—' }}</td></tr>
+      <tr><th>Kategori</th><td>{{ item.kategori }}</td><td>{{ found.kategori }}{% if item.kategori == found.kategori %} <i class="bi bi-check-circle-fill text-success" title="sama"></i>{% endif %}</td></tr>
+      <tr><th>Lokasi</th><td>{{ item.lokasi }}</td><td>{{ found.lokasi }}</td></tr>
+      <tr><th>Waktu</th><td>{% if item.waktu_diketahui %}Hilang {{ item.waktu_kejadian.strftime('%d %b %Y, %H.%M') }}{% else %}Belum diisi{% endif %}</td>
+        <td>Ditemukan {{ found.waktu_kejadian.strftime('%d %b %Y, %H.%M') }}</td></tr>
+      <tr><th>Ciri-ciri umum</th><td>{{ item.deskripsi if item.deskripsi_diisi else 'Belum diisi' }}</td><td>{{ found.deskripsi if found.deskripsi_diisi else 'Belum diisi' }}</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small ll-muted mt-2 mb-0"><i class="bi bi-lock"></i> Ciri khusus yang dicatat penemu sengaja disembunyikan. Kalau ini barangmu, kamu yang menyebutkannya saat klaim.</p>
+</div>
+
+{% if pending %}
+<div class="alert alert-secondary py-2">Klaimmu untuk laporan ini sedang diperiksa admin, biasanya dalam 1×24 jam. <a href="/laporan/{{ item.id }}" class="fw-bold">Lihat status</a></div>
+{% elif not bisa_klaim %}
+<div class="alert alert-secondary py-2">Barang ini sudah {{ found.status|lower }} dan tidak bisa diklaim lagi. {{ badge(found.status) }}</div>
+{% endif %}
+
+{% if bisa_klaim %}
+<details id="klaim" class="ll-card p-3 p-md-4 mb-3 ll-banding-klaim" {% if buka_klaim or error %}open{% endif %}>
+  <summary class="btn btn-ll w-100"><i class="bi bi-hand-index-thumb"></i> Ini barangku, ajukan klaim</summary>
+  <form method="post" action="/klaim" enctype="multipart/form-data">
+    <h2 class="h5"><i class="bi bi-shield-lock" style="color:var(--indigo)"></i> Ajukan klaim: {{ judul(found) }}</h2>
+    <p class="ll-muted small">Admin memeriksa buktimu sebelum kontak penemu dibuka. Semakin jelas buktinya, semakin cepat diputuskan.</p>
+    {% if error %}<div class="ll-note mb-3" role="alert"><div class="judul"><i class="bi bi-info-circle-fill"></i>{{ error }}</div></div>{% endif %}
+    <input type="hidden" name="match_id" value="{{ match.id }}">
+    <input type="hidden" name="asal" value="banding">
+    {% set form = {} %}{% set errors = {} %}<div class="mb-3">{% include "_bukti.html" %}</div>
+    <div class="d-flex justify-content-end"><button class="btn btn-ll">Kirim klaim</button></div>
+  </form>
+</details>
+{% endif %}
+
+<div class="d-flex flex-wrap gap-2">
+  {% if nav.berikut %}<a class="btn btn-ll-outline flex-fill" href="/rekomendasi/{{ item.id }}/banding/{{ nav.berikut }}">Bukan barangku, lihat berikutnya <i class="bi bi-chevron-right"></i></a>{% endif %}
+  <a class="btn btn-ll-outline flex-fill" href="/rekomendasi/{{ item.id }}">Kembali ke daftar rekomendasi</a>
+</div>
+{% endblock %}

@@ -4,42 +4,46 @@
 {% block content %}
 <div class="row g-4">
   <div class="col-lg-3">
-    <div class="ll-card p-3">
+    <div class="ll-card p-3 ll-rek-sisi">
       <div class="ll-label mb-2">Laporanmu</div>
-      {{ foto(item, 200) }}
-      <div class="h5 fw-bold mt-3 mb-1">{{ judul(item) }}</div>
-      <div class="ll-muted small">{{ item.kategori }} · {{ item.lokasi }}<br>Hilang {{ item.waktu_kejadian.strftime('%d %b %Y, %H.%M') }}</div>
-      <div class="my-2">{{ badge(item.status) }}</div>
+      <div class="ll-rek-sisi-foto">{{ foto(item, 200) }}</div>
+      <div class="ll-rek-sisi-isi"><div class="h5 fw-bold mt-3 mb-1">{{ judul(item) }}</div>
+      <div class="ll-muted small">{{ item.kategori }} · {{ item.lokasi }}<br>{% if item.waktu_diketahui %}Hilang {{ item.waktu_kejadian.strftime('%d %b %Y, %H.%M') }}{% else %}Waktu hilang belum diisi · <a href="/laporan/{{ item.id }}/ubah">isi</a>{% endif %}</div>
+      <div class="my-2">{{ badge(item.status) }}</div></div>
       <div class="ll-secret small mt-2">Skor menunjukkan kemiripan tampilan foto, bukan kepastian bahwa barang itu milikmu. Ajukan klaim, lalu sebutkan ciri khususnya.</div>
     </div>
   </div>
   <div class="col-lg-9">
     {{ flash_box(flash) }}
-    {% if kandidat %}
-    <h1 class="h3 mb-1">{{ kandidat|length }} barang temuan paling mirip</h1>
+    {% if tampil %}
+    <h1 class="h3 mb-1">{% if dekat %}{{ tampil|length }} barang temuan terdekat{% else %}{{ layak }} barang temuan yang mirip{% endif %}</h1>
     {% else %}
     <h1 class="h3 mb-1">Belum ada yang mirip sekarang</h1>
     {% endif %}
-    <p class="ll-muted small mb-3">
-      {% if semua %}Semua kategori dan waktu. <a class="fw-bold" href="?semua=0">Terapkan filter</a>
-      {% else %}Difilter: kategori {{ item.kategori }}, ditemukan setelah {{ tgl(item.waktu_kejadian) }}. <a class="fw-bold" href="?semua=1">Tampilkan semua kategori</a>{% endif %}
-      (dihitung dalam {{ '%.3f' % durasi }} detik)
-    </p>
+    <p class="ll-muted small mb-3">Fotomu dibandingkan dengan {{ jumlah }} barang temuan yang belum diklaim (dihitung dalam {{ '%.3f' % durasi }} detik).</p>
+    {% if tampil %}<details class="small ll-muted mb-3"><summary>Bagaimana urutan ini dihitung?</summary>
+      <div class="pt-2"><strong>Foto adalah penentu utama.</strong> Persen menunjukkan tingkat kecocokan: 0% berarti tidak lebih mirip daripada dua barang acak, 100% berarti hampir sama persis.
+      Kategori yang sama dan waktu yang masuk akal hanya <strong>menambah</strong> sedikit nilai; data itu tidak pernah menyembunyikan barang yang fotonya mirip.
+      Semua barang dengan kecocokan {{ batas_tampil }}% ke atas ditampilkan dari yang paling mirip; yang di bawahnya tidak ditampilkan karena bentuk dan warnanya jauh berbeda.
+      Ketuk barang untuk membandingkan fotonya berdampingan dengan fotomu. Kepemilikan tetap dibuktikan lewat ciri khusus saat klaim.</div></details>{% endif %}
     {% if pending %}<div class="alert alert-secondary py-2">Klaimmu sedang diperiksa admin, biasanya dalam 1×24 jam. <a href="/laporan/{{ item.id }}" class="fw-bold">Lihat status</a></div>{% endif %}
-    {% for k in kandidat %}
-    <div class="ll-card d-flex align-items-center gap-3 p-3 mb-2">
+    {% for k in tampil %}
+    {% set url_banding = '/rekomendasi/' ~ item.id ~ '/banding/' ~ k.match.id %}
+    <div class="ll-card ll-rek ll-rek-klik p-3 mb-2">
       <div class="ll-rank {% if k.rank == 1 %}top{% endif %}">{{ k.rank }}</div>
-      <img src="/foto/{{ k.item.path_foto }}" class="ll-thumb" style="width:64px;height:64px" alt="">
-      <div class="flex-grow-1"><div class="fw-semibold">{{ judul(k.item) }}</div><div class="ll-muted small">{{ k.item.lokasi }} · ditemukan {{ k.item.waktu_kejadian.strftime('%d %b') }}</div></div>
-      <div style="width:200px"><div class="d-flex justify-content-between small"><span class="ll-muted">Tingkat kemiripan</span><strong>{{ '%.0f' % (k.skor * 100) }}%</strong></div><div class="ll-bar mt-1"><div style="width:{{ [k.skor * 100, 0]|max }}%"></div></div></div>
-      {% if item.status == 'Hilang' and k.item.status == 'Ditemukan' %}<a class="btn btn-ll-outline" href="?semua={{ semua }}&klaim={{ k.match.id }}#klaim"><i class="bi bi-hand-index-thumb"></i> Ajukan klaim</a>
-      {% else %}{{ badge(k.item.status) }}{% endif %}
+      <a href="{{ url_banding }}" class="ll-rek-img-link" aria-hidden="true" tabindex="-1"><img src="/foto/{{ k.item.path_foto }}" class="ll-thumb ll-rek-img" alt=""></a>
+      <div class="ll-rek-info"><a class="fw-semibold ll-rek-judul stretched-link" href="{{ url_banding }}">{{ judul(k.item) }}</a><div class="ll-muted small">{{ k.item.lokasi }} · ditemukan {{ k.item.waktu_kejadian.strftime('%d %b') }} · {{ k.item.kategori }}</div>
+        <div class="small mt-1 d-flex flex-wrap gap-1"><span class="ll-mirip sedang"><i class="bi bi-image"></i> foto {{ persen_mirip(k.skor_foto) }}%</span>{% for a in k.alasan %}<span class="ll-mirip tinggi"><i class="bi bi-plus"></i>{{ a }}</span>{% endfor %}</div></div>
+      {% set pm = persen_mirip(k.skor) %}{% set tl = tingkat_mirip(k.skor) %}
+      <div class="ll-rek-skor"><div class="d-flex justify-content-between align-items-center small"><span class="ll-mirip {{ tl[1] }}">{{ tl[0] }}</span><strong>{{ pm }}%</strong></div><div class="ll-bar {{ tl[1] }} mt-1"><div style="width:{{ pm }}%"></div></div></div>
+      <div class="ll-rek-aksi"><a class="btn btn-ll-outline" href="{{ url_banding }}"><i class="bi bi-layout-split"></i> Bandingkan</a></div>
     </div>
     {% else %}
     <div class="ll-calm mb-3">
       <span class="ikon"><i class="bi bi-hourglass-split"></i></span>
       <div><h2 class="h5">Laporanmu tetap aktif.</h2>
-      <p>Setiap ada barang temuan baru, ia ikut dicocokkan dengan fotomu. Buka halaman ini lagi nanti untuk melihat hasil terbaru.{% if not semua %} Kamu juga bisa <a class="fw-bold" href="?semua=1">mencari di semua kategori</a>.{% endif %}</p></div>
+      <p>Setiap ada barang temuan baru, ia ikut dicocokkan dengan fotomu. Buka halaman ini lagi nanti untuk melihat hasil terbaru.</p>
+      {% if kandidat %}<p class="small mb-0">Ada {{ jumlah }} barang temuan, tetapi bentuk dan warnanya jauh berbeda dari fotomu. <a class="fw-bold" href="?dekat=1">Tetap lihat 5 terdekat</a></p>{% endif %}</div>
     </div>
     <div class="ll-card p-4">
       <h2 class="h6 mb-2">Sambil menunggu, coba ini</h2>
@@ -53,15 +57,24 @@
       </ul>
     </div>
     {% endfor %}
+    {% if lebih and not dekat %}
+    <a class="btn btn-ll-outline w-100 mt-2" href="?n={{ n + 10 }}#akhir"><i class="bi bi-chevron-down"></i> Tampilkan {{ [lebih, 10]|min }} barang lagi</a>
+    {% endif %}
+    <span id="akhir"></span>
+    {% if tampil and tersembunyi and not dekat %}
+    <p class="small ll-muted mt-2"><i class="bi bi-eye-slash"></i> {{ tersembunyi }} barang temuan lain tidak ditampilkan karena tidak mirip dengan fotomu.</p>
+    {% elif dekat and layak %}
+    <p class="small ll-muted mt-2"><a class="fw-bold" href="?">Kembali ke barang yang mirip</a></p>
+    {% endif %}
 
     {% if pilih and item.status == 'Hilang' %}
-    <form id="klaim" class="ll-card p-4 mt-4" style="border:2px solid var(--indigo)" method="post" action="/klaim">
+    <form id="klaim" class="ll-card p-4 mt-4" style="border:2px solid var(--indigo)" method="post" action="/klaim" enctype="multipart/form-data">
       <h2 class="h5"><i class="bi bi-shield-lock" style="color:var(--indigo)"></i> Verifikasi klaim: {{ judul(pilih.item) }} (#{{ pilih.rank }})</h2>
-      <p class="ll-muted small">Penemu menyimpan satu ciri khusus. Sebutkan ciri khusus barangmu yang tidak terlihat di foto (misalnya isi, stiker, goresan, atau tulisan).</p>
+      <p class="ll-muted small">Admin memeriksa buktimu sebelum kontak penemu dibuka. Semakin jelas buktinya, semakin cepat diputuskan.</p>
       {% if error %}<div class="ll-note mb-3" role="alert"><div class="judul"><i class="bi bi-info-circle-fill"></i>{{ error }}</div></div>{% endif %}
       <input type="hidden" name="match_id" value="{{ pilih.match.id }}">
-      <textarea class="form-control mb-3" name="jawaban_ciri" rows="2" placeholder="Contoh: ada nama saya di bagian dalam"></textarea>
-      <div class="d-flex justify-content-end gap-2"><a class="btn btn-ll-outline" href="?semua={{ semua }}">Batal</a><button class="btn btn-ll">Kirim jawaban</button></div>
+      {% set form = {} %}{% set errors = {} %}<div class="mb-3">{% include "_bukti.html" %}</div>
+      <div class="d-flex justify-content-end gap-2"><a class="btn btn-ll-outline" href="?dekat={{ dekat }}">Batal</a><button class="btn btn-ll">Kirim jawaban</button></div>
     </form>
     {% endif %}
   </div>

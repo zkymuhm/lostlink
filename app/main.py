@@ -14,17 +14,18 @@ from starlette.middleware.sessions import SessionMiddleware
 from . import matching
 from .auth import LoginRequired
 from .config import UPLOAD_DIR
-from .database import Base, engine, get_db
+from .database import Base, engine, get_db, pastikan_kolom
 from .models import Item, User
 from .routers import admin, auth, klaim, laporan
 from .templating import templates
 
 Base.metadata.create_all(bind=engine)
+pastikan_kolom()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    matching.siapkan_model()  # muat ResNet18 sekali saat server dinyalakan
+    matching.siapkan_model()  # muat model sekali saat server dinyalakan
     yield
 
 

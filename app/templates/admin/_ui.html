@@ -1,0 +1,23 @@
+{# Komponen bersama halaman admin agar tampilan seragam. #}
+{% macro jenis(j) -%}<span class="ll-adm-jenis {{ j }}"><i class="bi bi-{{ 'search-heart' if j == 'hilang' else 'box2-heart' }}"></i>{{ 'Hilang' if j == 'hilang' else 'Temuan' }}</span>{%- endmacro %}
+{% macro kepala(judul, sub, ringkas=[]) -%}
+<div class="ll-adm-head">
+  <div><h1>{{ judul }}</h1><p>{{ sub }}</p></div>
+  {% if ringkas %}<div class="ll-adm-stats">{% for angka, label, kelas in ringkas %}<div class="ll-adm-stat {{ kelas }}"><strong>{{ angka }}</strong><span>{{ label }}</span></div>{% endfor %}</div>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro sel_barang(item, sub=None, tampil_jenis=False) -%}
+<div class="ll-sel"><img src="/foto/{{ item.path_foto }}" class="ll-sel-img" alt="">
+  <div class="min-w-0"><div class="ll-sel-judul">{{ (item.nama or item.deskripsi.split('.')[0])[:48] }}</div>
+  <div class="ll-sel-sub">{% if tampil_jenis %}{{ jenis(item.jenis) }} · {% endif %}{{ sub if sub is not none else item.kategori }}</div></div></div>
+{%- endmacro %}
+
+{% macro sel_orang(u, sub=None) -%}
+<div class="ll-sel"><span class="ll-sel-avatar">{{ (u.nama or '?')[:1]|upper }}</span>
+  <div class="min-w-0"><div class="ll-sel-judul">{{ u.nama }}</div><div class="ll-sel-sub">{{ sub if sub is not none else u.email }}</div></div></div>
+{%- endmacro %}
+
+
+
+{% macro kosong(teks) -%}<tr><td colspan="9" class="ll-adm-kosong"><i class="bi bi-inbox"></i><div>{{ teks }}</div></td></tr>{%- endmacro %}

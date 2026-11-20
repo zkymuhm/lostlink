@@ -1,7 +1,28 @@
 {% extends "base.html" %}
 {% block title %}Lapor barang · LOSTLINK{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ aset('vendor/cropper/cropper.min.css') }}">
+<style>/* ukuran area potong dikunci di sini agar tidak bergantung pada cache style.css */
+#potong-wrap .ll-potong-area { background:#F3EFE6; border-radius:10px; padding:12px; }
+#potong-wrap .ll-potong-isi { height:min(320px, 50vh); }
+#potong-wrap .ll-potong-isi img { display:block; max-width:100%; max-height:100%; }
+/* pegangan sudut lebih besar agar mudah digeser, juga dengan jari */
+#potong-wrap .cropper-point { width:14px !important; height:14px !important; opacity:1; background:var(--mustard, #E3AA2B); border:2px solid #fff; border-radius:3px; }
+#potong-wrap .cropper-point.point-n, #potong-wrap .cropper-point.point-s { margin-left:-7px; }
+#potong-wrap .cropper-point.point-e, #potong-wrap .cropper-point.point-w { margin-top:-7px; }
+#potong-wrap .cropper-point.point-n { top:-7px; } #potong-wrap .cropper-point.point-s { bottom:-7px; }
+#potong-wrap .cropper-point.point-e { right:-7px; } #potong-wrap .cropper-point.point-w { left:-7px; }
+#potong-wrap .cropper-point.point-ne { top:-7px; right:-7px; } #potong-wrap .cropper-point.point-nw { top:-7px; left:-7px; }
+#potong-wrap .cropper-point.point-se { bottom:-7px; right:-7px; } #potong-wrap .cropper-point.point-sw { bottom:-7px; left:-7px; }
+@media (pointer: coarse) { #potong-wrap .cropper-point { width:22px !important; height:22px !important; }
+  #potong-wrap .cropper-point.point-n, #potong-wrap .cropper-point.point-s { margin-left:-11px; }
+  #potong-wrap .cropper-point.point-e, #potong-wrap .cropper-point.point-w { margin-top:-11px; }
+  #potong-wrap .cropper-point.point-n, #potong-wrap .cropper-point.point-ne, #potong-wrap .cropper-point.point-nw { top:-11px; }
+  #potong-wrap .cropper-point.point-s, #potong-wrap .cropper-point.point-se, #potong-wrap .cropper-point.point-sw { bottom:-11px; }
+  #potong-wrap .cropper-point.point-e, #potong-wrap .cropper-point.point-ne, #potong-wrap .cropper-point.point-se { right:-11px; }
+  #potong-wrap .cropper-point.point-w, #potong-wrap .cropper-point.point-nw, #potong-wrap .cropper-point.point-sw { left:-11px; } }</style>{% endblock %}
 {% block content %}
 {% set temuan = form.jenis == 'temuan' %}
+<div class="ll-sempit">
 <div id="sapa" class="ll-calm mb-4 {% if temuan %}temuan-mode{% endif %}">
   <span class="ikon"><i class="bi {{ 'bi-box2-heart' if temuan else 'bi-heart-pulse' }}"></i></span>
   <div>
@@ -9,52 +30,81 @@
     <p data-hilang="Isi yang kamu ingat saja. Cukup foto, kategori, dan lokasi; sisanya bisa dilengkapi nanti." data-temuan="Foto barangnya, tulis di mana kamu menemukannya, dan satu ciri khusus untuk memastikan pemilik aslinya.">{{ 'Foto barangnya, tulis di mana kamu menemukannya, dan satu ciri khusus untuk memastikan pemilik aslinya.' if temuan else 'Isi yang kamu ingat saja. Cukup foto, kategori, dan lokasi; sisanya bisa dilengkapi nanti.' }}</p>
   </div>
 </div>
-<div class="row g-4">
-  <div class="col-lg-8">
+<div>
+  <div>
     <form class="ll-card p-3 p-md-4" method="post" action="/laporan" enctype="multipart/form-data" novalidate>
       {% include "_catatan.html" %}
-      <div class="row g-2 mb-4">
+      <div class="row g-2 mb-1 ll-jenis-wrap{{ ' is-invalid' if errors.jenis }}">
         {% for val, lbl, ic, warna in [("hilang", "Barangku hilang", "search-heart", "var(--hilang)"), ("temuan", "Aku menemukan barang", "box2-heart", "var(--temuan)")] %}
         <div class="col-6"><label class="ll-jenis h-100">
           <input class="form-check-input m-0" type="radio" name="jenis" value="{{ val }}" {% if form.jenis == val %}checked{% endif %}><i class="bi bi-{{ ic }} fs-5" style="color:{{ warna }}"></i> {{ lbl }}</label></div>
         {% endfor %}
       </div>
+      {% with f="jenis" %}{% include "_galat.html" %}{% endwith %}
+      <div class="mb-4"></div>
       <label class="form-label" for="foto">1. Foto barang</label>
-      <div class="ll-drop mb-4">
+      <div class="ll-panduan mb-2" aria-label="Panduan memfoto">
+        <span><i class="bi bi-1-circle"></i> Satu barang saja</span>
+        <span><i class="bi bi-arrows-fullscreen"></i> Barang memenuhi foto</span>
+        <span><i class="bi bi-square"></i> Latar polos</span>
+        <span><i class="bi bi-brightness-high"></i> Cahaya terang</span>
+        <span><i class="bi bi-tag"></i> Tampakkan logo/motif</span>
+      </div>
+      <details class="small ll-muted mb-2"><summary>Kenapa ini penting?</summary>
+        <div class="pt-1">Sistem membandingkan <strong>seluruh isi foto</strong>, termasuk latar dan benda lain di sekitarnya. Semakin banyak bagian foto yang berisi barangmu, semakin tepat hasil pencocokannya.
+        Hanya punya foto lama atau fotonya ramai? Tidak apa-apa, pilih saja lalu <strong>potong</strong> supaya hanya barangnya yang tersisa.
+        Setelah dikirim, fotomu langsung dicocokkan dan kamu melihat 5 barang yang paling mirip.</div></details>
+      <div class="ll-drop{{ ' is-invalid' if errors.foto }}" id="drop">
         <i class="bi bi-camera fs-2" style="color:var(--indigo)"></i>
         <div class="fw-bold mb-2">Ambil atau pilih foto</div>
-        <input class="form-control" id="foto" type="file" name="foto" accept="image/*">
-        <div class="ll-muted small mt-2">Satu barang per foto. JPG, PNG, WEBP, atau HEIC, maksimal 5 MB.</div>
+        <input class="form-control" id="foto" type="file" name="foto" accept="image/*,.heic,.heif" aria-describedby="galat-foto">
+        <input type="hidden" name="untuk" value="{{ form.untuk or '' }}">
+        <input type="hidden" name="foto_tmp" id="foto_tmp" value="{{ form.foto_tmp or '' }}">
+        <input type="hidden" name="potong" id="potong" value="">
+        <div class="ll-muted small mt-2">Satu barang per foto. JPG, PNG, WEBP, atau HEIC, maksimal {{ maks_mb }} MB.</div>
+        <div class="ll-preview {{ 'tampil' if form.foto_tmp }}" id="preview">
+          <span id="preview-ikon" class="ll-ikon" hidden style="width:72px;height:72px;font-size:1.6rem"><i class="bi bi-image"></i></span>
+          <img id="preview-img" src="{{ '/foto/' ~ form.foto_tmp if form.foto_tmp else '' }}" alt="Pratinjau foto">
+          <div class="small"><div class="fw-bold" id="preview-nama">{{ 'Foto sebelumnya masih tersimpan' if form.foto_tmp else '' }}</div><div class="ll-muted" id="preview-info">{{ 'Tidak perlu memilih ulang. Pilih foto lain bila ingin mengganti.' if form.foto_tmp else '' }}</div></div>
+        </div>
       </div>
+      <div id="potong-wrap" class="ll-potong mt-3" hidden>
+        <div class="d-flex justify-content-between align-items-center mb-2 gap-2 flex-wrap">
+          <div class="fw-semibold small"><i class="bi bi-crop"></i> Potong supaya hanya barangnya yang tersisa</div>
+          <button type="button" class="btn btn-sm btn-ll-outline" id="potong-reset"><i class="bi bi-arrow-counterclockwise"></i> Pakai seluruh foto</button>
+        </div>
+        <div class="ll-potong-area"><div class="ll-potong-isi"><img id="potong-img" alt="Foto yang akan dipotong"></div></div>
+        <div class="form-text" id="potong-info">Geser sudut kotak ke tepi barang. Bagian di luar kotak tidak ikut dicocokkan.</div>
+      </div>
+      {% with f="foto" %}{% include "_galat.html" %}{% endwith %}
+      <div class="mb-4"></div>
       <div class="row g-3 mb-4">
-        <div class="col-md-6"><label class="form-label" for="kategori">2. Kategori</label>
-          <select class="form-select" id="kategori" name="kategori"><option value="">Pilih kategori</option>
-            {% for k in kategori_list %}<option {% if form.kategori == k %}selected{% endif %}>{{ k }}</option>{% endfor %}</select></div>
-        <div class="col-md-6"><label class="form-label" for="lokasi">3. Lokasi terakhir</label><input class="form-control" id="lokasi" name="lokasi" value="{{ form.lokasi or '' }}" placeholder="Contoh: Stasiun Malang, ruang tunggu"></div>
+        <div class="col-md-6"><label class="form-label" for="nama">2. Nama barang <span class="ll-opsional">opsional</span></label><input class="form-control" id="nama" name="nama" value="{{ form.nama or '' }}" placeholder="Contoh: Case earbud" maxlength="60"></div>
+        <div class="col-md-6"><label class="form-label" for="kategori">3. Kategori</label>
+          <select class="form-select{{ ' is-invalid' if errors.kategori }}" id="kategori" name="kategori"><option value="">Pilih kategori</option>
+            {% for k in kategori_list %}<option {% if form.kategori == k %}selected{% endif %}>{{ k }}</option>{% endfor %}</select>{% with f="kategori" %}{% include "_galat.html" %}{% endwith %}</div>
+        <div class="col-12"><label class="form-label" for="lokasi">4. Lokasi terakhir</label><input class="form-control{{ ' is-invalid' if errors.lokasi }}" id="lokasi" name="lokasi" value="{{ form.lokasi or '' }}" placeholder="Contoh: Stasiun Malang, ruang tunggu" maxlength="120">{% with f="lokasi" %}{% include "_galat.html" %}{% endwith %}</div>
       </div>
       <div id="ciri-wrap" class="ll-secret kunci mb-4" {% if not temuan %}hidden{% endif %}>
-        <label class="form-label mb-1" for="ciri_temuan"><i class="bi bi-lock-fill" style="color:var(--verif)"></i> 4. Satu ciri khusus (rahasia)</label>
-        <div class="ll-muted small mb-2">Tidak ditampilkan ke siapa pun. Nanti pemilik diminta menyebutkannya untuk membuktikan barang ini miliknya.</div>
-        <input class="form-control" id="ciri_temuan" name="{{ 'ciri_khusus' if temuan else '' }}" value="{{ form.ciri_khusus or '' }}" placeholder="Contoh: ada stiker di bagian dalam">
+        <label class="form-label mb-1" for="ciri_temuan"><i class="bi bi-lock-fill" style="color:var(--verif)"></i> 5. Satu ciri khusus (rahasia)</label>
+        <div class="ll-muted small mb-2">Satu hal yang <strong>tidak terlihat di foto</strong>, misalnya isi di dalamnya, goresan, atau gambar layar kunci. Dirahasiakan; pemilik harus menyebutkannya saat klaim.</div>
+        <input class="form-control{{ ' is-invalid' if errors.ciri_khusus }}" id="ciri_temuan" name="{{ 'ciri_khusus' if temuan else '' }}" value="{{ form.ciri_khusus or '' }}" placeholder="Contoh: ada kartu parkir" maxlength="200">
+        {% with f="ciri_khusus" %}{% include "_galat.html" %}{% endwith %}
       </div>
-      <details class="ll-more mb-4" {% if form.deskripsi or form.waktu %}open{% endif %}>
-        <summary><i class="bi bi-plus-circle"></i> Tambah detail <span class="ll-opsional">opsional, bisa dilengkapi nanti</span></summary>
+      <details class="ll-more mb-4" {% if form.deskripsi or form.waktu or errors.waktu %}open{% endif %}>
+        <summary><i class="bi bi-plus-circle"></i> <span>Tambah detail <span class="ll-opsional d-block d-sm-inline">opsional, bisa nanti</span></span></summary>
         <div class="pb-3">
-          <div class="mb-3"><label class="form-label" for="waktu">Kira-kira kapan</label><input class="form-control" id="waktu" type="datetime-local" name="waktu" value="{{ form.waktu or '' }}"><div class="form-text">Kosongkan bila tidak ingat; kami pakai waktu sekarang.</div></div>
+          <div class="mb-3"><label class="form-label" for="waktu">Kira-kira kapan</label><input class="form-control{{ ' is-invalid' if errors.waktu }}" id="waktu" type="datetime-local" name="waktu" max="{{ maks_waktu }}" value="{{ form.waktu or '' }}">{% with f="waktu" %}{% include "_galat.html" %}{% endwith %}<div class="form-text">Kosongkan bila tidak ingat; kami pakai waktu sekarang.</div></div>
           <div class="mb-3"><label class="form-label" for="deskripsi">Ciri-ciri yang terlihat</label><textarea class="form-control" id="deskripsi" name="deskripsi" rows="2" placeholder="Contoh: Ransel hitam, dua kantong depan, ada gantungan kunci.">{{ form.deskripsi or '' }}</textarea></div>
           <div id="ciri-hilang" {% if temuan %}hidden{% endif %}><label class="form-label" for="ciri_hilang"><i class="bi bi-lock-fill" style="color:var(--verif)"></i> Ciri khusus (rahasia)</label><input class="form-control" id="ciri_hilang" name="{{ '' if temuan else 'ciri_khusus' }}" value="{{ form.ciri_khusus or '' }}" placeholder="Contoh: ada nama saya di dalam tas"><div class="form-text">Hanya dilihat admin saat memverifikasi klaim.</div></div>
         </div>
       </details>
-      <div class="d-flex justify-content-end gap-2 ll-sticky-submit"><a href="/" class="btn btn-ll-outline">Batal</a><button class="btn btn-ll"><i class="bi bi-send"></i> <span id="kirim-lbl">{{ 'Simpan barang temuan' if temuan else 'Cari barangku' }}</span></button></div>
+      <div class="d-flex justify-content-end gap-2 ll-sticky-submit"><a href="{{ kembali(request, '/', '')[0] }}" class="btn btn-ll-outline">Batal</a><button class="btn btn-ll"><i class="bi bi-send"></i> <span id="kirim-lbl">{{ 'Simpan barang temuan' if temuan else 'Cari barangku' }}</span></button></div>
     </form>
   </div>
-  <div class="col-lg-4">
-    <div class="ll-card p-4 mb-3"><h2 class="h6"><i class="bi bi-lightbulb" style="color:var(--verif)"></i> Tips foto agar mudah dicocokkan</h2>
-      <ul class="small mb-0 ps-3"><li>Foto seluruh barang, jangan terpotong.</li><li>Cahaya cukup, hindari bayangan.</li><li>Latar polos lebih mudah dikenali.</li><li>Letakkan barang, jangan sambil dipegang.</li></ul></div>
-    <div class="ll-card p-4" style="background:var(--temuan-soft);border-color:transparent"><h2 class="h6">Setelah kamu kirim</h2>
-      <ol class="small mb-0 ps-3"><li>Fotomu dicocokkan dalam hitungan detik.</li><li>Kamu langsung melihat 5 barang temuan yang paling mirip.</li><li>Kalau ada barangmu, ajukan klaim dengan menyebut ciri khususnya.</li></ol></div>
-  </div>
 </div>
+</div>
+<script src="{{ aset('vendor/cropper/cropper.min.js') }}"></script>
 <script>
 (function () {
   var radios = document.querySelectorAll('input[name="jenis"]');
@@ -71,6 +121,63 @@
     lbl.textContent = t ? 'Simpan barang temuan' : 'Cari barangku';
   }
   radios.forEach(function (r) { r.addEventListener('change', function () { set(r.value); }); });
+
+  // Pratinjau + cek foto sebelum dikirim (server tetap memeriksa ulang)
+  var MAKS = {{ maks_mb }} * 1024 * 1024, OK = /\.(jpe?g|png|webp|heic|heif)$/i;
+  var inF = document.getElementById('foto'), drop = document.getElementById('drop'), pv = document.getElementById('preview');
+  var pvImg = document.getElementById('preview-img'), pvNama = document.getElementById('preview-nama'), pvInfo = document.getElementById('preview-info');
+  var tmp = document.getElementById('foto_tmp'), pvIkon = document.getElementById('preview-ikon');
+  function galatFoto(pesan) {
+    var g = document.getElementById('galat-foto');
+    if (!pesan) { if (g) g.remove(); drop.classList.remove('is-invalid'); return; }
+    if (!g) { g = document.createElement('div'); g.className = 'll-galat'; g.id = 'galat-foto'; g.innerHTML = '<i class="bi bi-exclamation-circle"></i><span></span>'; drop.after(g); }
+    g.querySelector('span').textContent = pesan; drop.classList.add('is-invalid');
+  }
+  // Alat potong (Cropper.js): koordinat dikirim sebagai pecahan 0-1, pemotongan dilakukan di server
+  var wrap = document.getElementById('potong-wrap'), pImg = document.getElementById('potong-img'), pIn = document.getElementById('potong');
+  var cropper = null;
+  function tutupPotong() { if (cropper) { cropper.destroy(); cropper = null; } wrap.hidden = true; pIn.value = ''; }
+  function bukaPotong(url) {
+    tutupPotong();
+    pImg.onload = function () {
+      pImg.onload = null;
+      wrap.hidden = false;
+      cropper = new Cropper(pImg, { viewMode: 1, autoCropArea: 1, checkOrientation: false,  // browser sudah memutar foto HP sesuai EXIF; server juga (exif_transpose)
+         zoomable: false, movable: false, rotatable: false, scalable: false,
+        background: false, guides: false, responsive: true,
+        crop: function (e) {
+          var w = pImg.naturalWidth, h = pImg.naturalHeight, d = e.detail;
+          var luas = (d.width * d.height) / (w * h);
+          pIn.value = luas > 0.97 ? '' : [d.x / w, d.y / h, d.width / w, d.height / h].map(function (v) { return Math.max(0, v).toFixed(4); }).join(',');
+          document.getElementById('potong-info').textContent = pIn.value
+            ? 'Hanya bagian di dalam kotak yang dicocokkan (' + Math.round(luas * 100) + '% foto).'
+            : 'Geser sudut kotak ke tepi barang. Bagian di luar kotak tidak ikut dicocokkan.';
+        } });
+    };
+    pImg.onerror = tutupPotong;  // mis. HEIC di browser selain Safari: dikirim tanpa dipotong
+    pImg.src = url;
+  }
+  document.getElementById('potong-reset').addEventListener('click', function () { if (cropper) cropper.reset(); });
+  inF.addEventListener('change', function () {
+    tutupPotong();
+    var f = inF.files[0];
+    if (!f) return;
+    var mb = (f.size / 1024 / 1024).toFixed(1);
+    if (!OK.test(f.name)) { galatFoto('File \u201c' + f.name + '\u201d bukan foto. Pakai JPG, PNG, WEBP, atau HEIC.'); inF.value = ''; return; }
+    if (f.size > MAKS) { galatFoto('Fotonya ' + mb + ' MB, lebih dari batas {{ maks_mb }} MB. Pilih foto lain atau kirim versi yang lebih kecil.'); inF.value = ''; return; }
+    galatFoto(''); tmp.value = '';
+    pvNama.textContent = f.name; pvInfo.textContent = (f.size < 1048576 ? Math.max(1, Math.round(f.size / 1024)) + ' KB' : mb + ' MB') + ' \u00b7 siap dikirim';
+    pvImg.hidden = false; pvIkon.hidden = true;
+    pvImg.onerror = function () { pvImg.hidden = true; pvIkon.hidden = false;
+      pvInfo.textContent = 'Pratinjau tidak bisa ditampilkan di browser ini (biasanya foto HEIC). Fotonya tetap terkirim dan diproses; pemotongan tidak tersedia.'; };
+    var url = URL.createObjectURL(f);
+    pvImg.src = url;
+    pv.classList.add('tampil');
+    bukaPotong(url);
+  });
+  // Arahkan ke kolom pertama yang perlu dicek
+  var pertama = document.querySelector('.is-invalid');
+  if (pertama) { pertama.scrollIntoView({ block: 'center' }); var i = pertama.matches('input,select,textarea') ? pertama : pertama.querySelector('input'); if (i && i.type !== 'file' && i.type !== 'radio') i.focus({ preventScroll: true }); }
 })();
 </script>
 {% endblock %}

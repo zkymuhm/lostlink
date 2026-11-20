@@ -1,10 +1,30 @@
 {% extends "base.html" %}
 {% from "_macros.html" import badge, judul, tgl %}
-{% block title %}Status laporan · LOSTLINK{% endblock %}
+{% block title %}Laporanku · LOSTLINK{% endblock %}
 {% block content %}
-<h1 class="h2 mb-1">Status laporan</h1>
-<p class="ll-muted">Semua laporan Anda beserta tahap statusnya: Hilang → Ditemukan → Diverifikasi → Dikembalikan.</p>
-<div class="ll-card overflow-hidden table-responsive">
+<h1 class="h2 mb-1">Laporanku</h1>
+<p class="ll-muted">Semua laporanmu dan statusnya. Untuk barang hilang, tekan <strong>Rekomendasi</strong> untuk melihat barang temuan yang paling mirip.</p>
+<div class="d-md-none">
+  {% for it in items %}
+  <div class="ll-card p-3 mb-2">
+    <a href="/laporan/{{ it.id }}" class="d-flex gap-3 text-decoration-none" style="color:inherit">
+      <img src="/foto/{{ it.path_foto }}" class="ll-thumb" style="width:64px;height:64px" alt="">
+      <div class="flex-grow-1" style="min-width:0">
+        <div class="d-flex justify-content-between gap-2 align-items-start"><div class="fw-bold">{{ judul(it) }}</div>{{ badge(it.status) }}</div>
+        <div class="ll-muted small mt-1">{{ 'Hilang' if it.jenis == 'hilang' else 'Temuan' }} · {{ tgl(it.waktu_kejadian) }}</div>
+        <div class="ll-muted small text-truncate"><i class="bi bi-geo-alt"></i> {{ it.lokasi }}</div>
+      </div>
+    </a>
+    <div class="d-flex gap-2 mt-3">
+      {% if it.jenis == 'hilang' and it.status == 'Hilang' %}<a class="btn btn-ll flex-fill" href="/rekomendasi/{{ it.id }}"><i class="bi bi-stars"></i> Rekomendasi</a>{% endif %}
+      <a class="btn btn-ll-outline flex-fill" href="/laporan/{{ it.id }}">Detail</a>
+    </div>
+  </div>
+  {% else %}
+  <div class="ll-card p-4 text-center ll-muted">Belum ada laporan. <a href="/lapor" class="fw-bold">Lapor barang</a></div>
+  {% endfor %}
+</div>
+<div class="ll-card overflow-hidden table-responsive d-none d-md-block">
 <table class="table table-ll">
   <thead><tr><th class="ps-4">Foto</th><th>Barang</th><th>Jenis</th><th>Lokasi</th><th>Waktu</th><th>Status</th><th></th></tr></thead>
   <tbody>

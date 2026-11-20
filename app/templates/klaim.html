@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% from "_macros.html" import foto, judul, badge, flash_box %}
+{% block title %}Klaim barang · LOSTLINK{% endblock %}
+{% block content %}
+{% set kb = kembali(request, '/laporan/' ~ found.id, 'Kembali ke barang') %}<a href="{{ kb[0] }}" class="ll-kembali"><i class="bi bi-arrow-left"></i> {{ kb[1] }}</a>
+<h1 class="h2 mt-2 mb-1">Ini barangku</h1>
+<p class="ll-muted">Cukup satu halaman ini. Admin memeriksa buktimu sebelum kontak penemu dibuka; semakin jelas buktinya, semakin cepat diputuskan.</p>
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="ll-card p-3">
+      <div class="ll-label mb-2">Barang temuan</div>
+      {{ foto(found, 200) }}
+      <div class="h5 fw-bold mt-3 mb-1">{{ judul(found) }}</div>
+      <div class="ll-muted small">{{ found.kategori }} · {{ found.lokasi }}<br>Ditemukan {{ found.waktu_kejadian.strftime('%d %b %Y') }}</div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    {{ flash_box(flash) }}
+    <form class="ll-card p-3 p-md-4" method="post" action="/barang/{{ found.id }}/klaim" enctype="multipart/form-data" novalidate>
+      {% include "_catatan.html" %}
+      <div class="fw-semibold mb-2">1. Laporan barang hilangmu</div>
+      {% if milik %}
+      <div class="d-grid gap-2 mb-1">
+        {% for it, skor in milik %}{% set pm = persen_mirip(skor) %}
+        <label class="ll-jenis justify-content-start{{ ' is-invalid' if errors.hilang_id }}">
+          <input class="form-check-input m-0" type="radio" name="hilang_id" value="{{ it.id }}" {% if form.hilang == it.id %}checked{% endif %}>
+          <img src="/foto/{{ it.path_foto }}" class="ll-thumb" style="width:44px;height:44px" alt="">
+          <span class="flex-grow-1"><span class="fw-semibold">{{ judul(it) }}</span><br><span class="ll-muted small">{{ it.lokasi }} · dilaporkan {{ it.dibuat_pada.strftime('%d %b') }}</span></span>
+          {% if pm >= batas_tampil %}<span class="ll-mirip {{ tingkat_mirip(skor)[1] }}">mirip {{ pm }}%</span>{% endif %}
+        </label>
+        {% endfor %}
+        <label class="ll-jenis justify-content-start{{ ' is-invalid' if errors.hilang_id }}">
+          <input class="form-check-input m-0" type="radio" name="hilang_id" value="0" {% if form.hilang == 0 %}checked{% endif %}>
+          <span class="ll-thumb d-inline-flex align-items-center justify-content-center" style="width:44px;height:44px"><i class="bi bi-plus-lg"></i></span>
+          <span><span class="fw-semibold">Belum dilaporkan</span><br><span class="ll-muted small">Isi foto dan lokasinya di bawah, laporan dibuat otomatis</span></span>
+        </label>
+      </div>
+      {% with f="hilang_id" %}{% include "_galat.html" %}{% endwith %}
+      <div class="form-text mb-2">Diurutkan dari laporan yang fotonya paling mirip dengan barang ini.</div>
+      {% else %}
+      <p class="ll-muted small mb-2">Kamu belum punya laporan barang hilang. Cukup isi foto dan lokasinya di sini; laporannya kami buat otomatis bersamaan dengan klaim.</p>
+      <input type="hidden" name="hilang_id" value="0">
+      {% endif %}
+
+      <div id="laporan-baru" class="ll-secret mt-2 mb-4" {% if milik and form.hilang != 0 %}hidden{% endif %}>
+        <label class="form-label" for="foto_pemilik">Foto barangmu <span class="ll-wajib">wajib</span></label>
+        <input class="form-control{{ ' is-invalid' if errors.foto_pemilik }}" id="foto_pemilik" type="file" name="foto_pemilik" accept="image/*,.heic,.heif">
+        {% with f="foto_pemilik" %}{% include "_galat.html" %}{% endwith %}
+        <div class="form-text">Foto lama juga boleh, misalnya dari galeri HP. Admin membandingkannya dengan foto dari penemu.{% if errors %} Pilih ulang fotonya, ya.{% endif %}</div>
+        <div class="ll-preview" id="pv-pemilik"><img id="pv-pemilik-img" alt="Pratinjau"><div class="small"><div class="fw-bold" id="pv-pemilik-nama"></div><div class="ll-muted">siap dikirim</div></div></div>
+        <div class="row g-2 mt-1">
+          <div class="col-md-6"><label class="form-label" for="nama">Nama barang <span class="ll-opsional">opsional</span></label>
+            <input class="form-control" id="nama" name="nama" maxlength="60" value="{{ form.nama or '' }}" placeholder="Contoh: Case earbud biru"></div>
+          <div class="col-md-6"><label class="form-label" for="lokasi">Kira-kira hilang di mana <span class="ll-wajib">wajib</span></label>
+            <input class="form-control{{ ' is-invalid' if errors.lokasi }}" id="lokasi" name="lokasi" maxlength="120" value="{{ form.lokasi or '' }}" placeholder="Contoh: Stasiun Malang">
+            {% with f="lokasi" %}{% include "_galat.html" %}{% endwith %}</div>
+        </div>
+      </div>
+
+      <div class="mb-1 mt-3 fw-semibold">2. Bukti kepemilikan</div>
+      <div class="ll-secret kunci mb-4">{% include "_bukti.html" %}</div>
+      <div class="d-flex justify-content-end gap-2"><a href="{{ kb[0] }}" class="btn btn-ll-outline">Batal</a><button class="btn btn-ll"><i class="bi bi-send"></i> Kirim klaim</button></div>
+    </form>
+<script>
+(function () {
+  var baru = document.getElementById('laporan-baru');
+  document.querySelectorAll('input[name=hilang_id]').forEach(function (r) {
+    r.addEventListener('change', function () { baru.hidden = r.value !== '0'; });
+  });
+  var f = document.getElementById('foto_pemilik'), pv = document.getElementById('pv-pemilik');
+  f.addEventListener('change', function () {
+    var x = f.files[0]; if (!x) { pv.classList.remove('tampil'); return; }
+    document.getElementById('pv-pemilik-img').src = URL.createObjectURL(x);
+    document.getElementById('pv-pemilik-nama').textContent = x.name;
+    pv.classList.add('tampil');
+  });
+})();
+</script>
+  </div>
+</div>
+{% endblock %}

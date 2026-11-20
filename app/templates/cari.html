@@ -1,28 +1,69 @@
 {% extends "base.html" %}
-{% from "_macros.html" import kartu %}
-{% block title %}Hasil pencarian · LOSTLINK{% endblock %}
+{% from "_macros.html" import foto, judul %}
+{% block title %}Cari barang · LOSTLINK{% endblock %}
 {% block content %}
-<a href="/" class="small fw-semibold text-decoration-none"><i class="bi bi-arrow-left"></i> Kembali ke beranda</a>
-<h1 class="h2 mt-2 mb-1">Hasil pencarian</h1>
-<p class="ll-muted">Cari laporan barang hilang dan temuan berdasarkan kata kunci, kategori, lokasi, dan waktu.</p>
-<form class="ll-card p-3 mb-4 row g-3 align-items-end mx-0" method="get" action="/laporan">
-  <input type="hidden" name="jenis" value="{{ f.jenis }}">
-  <div class="col-md-4"><label class="form-label">Cari barang</label><input class="form-control" name="q" value="{{ f.q }}" placeholder="Contoh: ransel hitam"></div>
-  <div class="col-md-2"><label class="form-label">Kategori</label><select class="form-select" name="kategori"><option value="">Semua</option>{% for k in kategori_list %}<option {% if f.kategori == k %}selected{% endif %}>{{ k }}</option>{% endfor %}</select></div>
-  <div class="col-md-2"><label class="form-label">Lokasi</label><input class="form-control" name="lokasi" value="{{ f.lokasi }}" placeholder="Semua lokasi"></div>
-  <div class="col-md-3"><label class="form-label">Waktu (dari – sampai)</label><div class="d-flex gap-1"><input class="form-control" type="date" name="dari" value="{{ f.dari }}"><input class="form-control" type="date" name="sampai" value="{{ f.sampai }}"></div></div>
-  <div class="col-md-1"><button class="btn btn-ll w-100" aria-label="Cari"><i class="bi bi-search"></i></button></div>
-</form>
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <div class="fw-bold">{{ items|length }} barang ditemukan, urut terbaru</div>
-  <div class="d-flex gap-2">
-    {% for val, lbl in [("", "Semua"), ("hilang", "Hilang"), ("temuan", "Temuan")] %}
-    <a class="ll-pill {% if f.jenis == val %}active{% endif %}" href="/laporan?q={{ f.q|urlencode }}&kategori={{ f.kategori|urlencode }}&lokasi={{ f.lokasi|urlencode }}&dari={{ f.dari }}&sampai={{ f.sampai }}&jenis={{ val }}">{{ lbl }}</a>
-    {% endfor %}
-  </div>
+{% set temuan = f.jenis == 'temuan' %}
+{% macro tautan(jenis, selesai=f.selesai) -%}/laporan?q={{ f.q|urlencode }}&kategori={{ f.kategori|urlencode }}&lokasi={{ f.lokasi|urlencode }}&dari={{ f.dari }}&sampai={{ f.sampai }}&jenis={{ jenis }}{% if selesai %}&selesai=1{% endif %}{%- endmacro %}
+<h1 class="h2 mb-3">Cari barang</h1>
+
+<div class="ll-cari-tab mb-3" role="tablist">
+  <a class="temuan {{ 'aktif' if temuan }}" href="{{ tautan('temuan') }}" role="tab">
+    <i class="bi bi-box2-heart"></i><span><strong>Barang ditemukan</strong><small>Mungkin barangmu ada di sini</small></span><b>{{ jumlah.temuan }}</b></a>
+  <a class="hilang {{ 'aktif' if not temuan }}" href="{{ tautan('hilang') }}" role="tab">
+    <i class="bi bi-search-heart"></i><span><strong>Dicari pemiliknya</strong><small>Kamu menemukan salah satunya?</small></span><b>{{ jumlah.hilang }}</b></a>
 </div>
-<div class="row g-4">
-  {% for it in items %}<div class="col-sm-6 col-lg-3">{{ kartu(it) }}</div>
-  {% else %}<div class="text-center py-5"><i class="bi bi-binoculars fs-1 ll-muted"></i><p class="ll-muted">Tidak ada laporan yang cocok. Coba kata kunci lain atau hapus filter.</p></div>{% endfor %}
+
+<form class="ll-card p-3 mb-3 row g-2 align-items-end mx-0" method="get" action="/laporan">
+  <input type="hidden" name="jenis" value="{{ f.jenis }}">
+  {% if f.selesai %}<input type="hidden" name="selesai" value="1">{% endif %}
+  <div class="col-12 d-flex gap-2"><input class="form-control" name="q" value="{{ f.q }}" aria-label="Kata kunci" placeholder="Contoh: dompet kulit"><button class="btn btn-ll px-3 text-nowrap flex-none"><i class="bi bi-search"></i><span class="d-none d-sm-inline"> Cari</span></button></div>
+  {% set n_filter = [f.kategori, f.lokasi, f.dari or f.sampai]|select|list|length %}
+  <details class="col-12 ll-filter" {% if n_filter %}open{% endif %}>
+    <summary><i class="bi bi-sliders"></i> Filter<span class="d-none d-sm-inline">: kategori, lokasi, tanggal</span>{% if n_filter %} <span class="ll-filter-aktif">{{ n_filter }} aktif</span>{% endif %}<i class="bi bi-chevron-down ll-filter-panah"></i></summary>
+    <div class="row g-2 pt-2">
+      <div class="col-6 col-md-3"><label class="form-label small">Kategori</label><select class="form-select" name="kategori"><option value="">Semua</option>{% for k in kategori_list %}<option {% if f.kategori == k %}selected{% endif %}>{{ k }}</option>{% endfor %}</select></div>
+      <div class="col-6 col-md-3"><label class="form-label small">Lokasi</label><input class="form-control" name="lokasi" value="{{ f.lokasi }}" placeholder="Semua"></div>
+      <div class="col-6 col-md-3"><label class="form-label small">{{ 'Ditemukan' if temuan else 'Hilang' }} dari</label><input class="form-control" type="date" name="dari" value="{{ f.dari }}"></div>
+      <div class="col-6 col-md-3"><label class="form-label small">sampai</label><input class="form-control" type="date" name="sampai" value="{{ f.sampai }}"></div>
+    </div>
+  </details>
+</form>
+
+<div class="ll-cari-info {{ f.jenis }} mb-3">
+  {% if temuan %}<i class="bi bi-info-circle"></i> Barang yang <strong>ditemukan orang lain</strong> dan menunggu pemiliknya. Kalau ada barangmu, buka lalu tekan <strong>Ini barangku</strong>.
+  {% else %}<i class="bi bi-info-circle"></i> Barang yang <strong>sedang dicari pemiliknya</strong>. Kalau kamu menemukan salah satunya, tekan <strong>Aku menemukannya</strong> untuk melaporkannya.{% endif %}
+</div>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <div class="fw-bold">{{ items|length }} barang{% if f.q %} untuk “{{ f.q }}”{% endif %}</div>
+  <a class="small fw-semibold" href="{{ tautan(f.jenis, 0 if f.selesai else 1) }}">{{ 'Sembunyikan yang sudah selesai' if f.selesai else 'Tampilkan juga yang sudah diproses' }}</a>
+</div>
+<div class="row g-3">
+  {% for it in items %}
+  <div class="col-6 col-lg-3">
+    <div class="ll-card ll-cari-kartu {{ it.jenis }} h-100">
+      <a href="/laporan/{{ it.id }}" class="ll-cari-foto">{{ foto(it, 160) }}
+        <span class="ll-cari-pita">{% if it.jenis == 'temuan' %}<i class="bi bi-box2-heart"></i> Ditemukan{% else %}<i class="bi bi-search-heart"></i> Dicari{% endif %}</span>
+        {% if it.status not in ('Hilang', 'Ditemukan') %}<span class="ll-cari-proses">{{ it.status }}</span>{% endif %}</a>
+      <div class="p-2 pt-2 d-flex flex-column flex-grow-1">
+        <a href="/laporan/{{ it.id }}" class="fw-bold ll-2baris text-decoration-none" style="color:inherit">{{ judul(it) }}</a>
+        <div class="ll-muted small text-truncate"><i class="bi bi-geo-alt"></i> {{ it.lokasi }}</div>
+        <div class="ll-muted small"><i class="bi bi-calendar3"></i> {{ 'Ditemukan' if it.jenis == 'temuan' else 'Hilang' }} {{ it.waktu_kejadian.strftime('%d %b') }}</div>
+        <div class="mt-auto pt-2">
+          {% if it.user_id == user.id %}<a class="btn btn-sm btn-ll-outline w-100" href="/laporan/{{ it.id }}">Laporanmu</a>
+          {% elif it.jenis == 'temuan' and it.status == 'Ditemukan' %}<a class="btn btn-sm btn-ll w-100" href="/barang/{{ it.id }}/klaim"><i class="bi bi-hand-index-thumb"></i> Ini barangku</a>
+          {% elif it.jenis == 'hilang' and it.status == 'Hilang' %}<a class="btn btn-sm btn-temuan w-100" href="/lapor?jenis=temuan"><i class="bi bi-box2-heart"></i> Aku menemukannya</a>
+          {% else %}<a class="btn btn-sm btn-ll-outline w-100" href="/laporan/{{ it.id }}">Lihat</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12"><div class="ll-card p-4 text-center">
+    <i class="bi bi-binoculars fs-1 ll-muted"></i>
+    <p class="ll-muted mb-2">Tidak ada {{ 'barang ditemukan' if temuan else 'barang yang dicari' }} yang cocok.</p>
+    {% set lain = jumlah.hilang if temuan else jumlah.temuan %}
+    {% if lain %}<a class="fw-bold" href="{{ tautan('hilang' if temuan else 'temuan') }}">Ada {{ lain }} hasil di tab {{ 'Dicari pemiliknya' if temuan else 'Barang ditemukan' }}</a>{% else %}<p class="ll-muted small mb-0">Coba kata kunci lain atau hapus filter.</p>{% endif %}
+  </div></div>
+  {% endfor %}
 </div>
 {% endblock %}

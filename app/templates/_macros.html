@@ -6,7 +6,7 @@
 <img src="/foto/{{ item.path_foto }}" alt="Foto {{ item.deskripsi }}" class="ll-foto {{ cls }}" style="height:{{ h }}px" loading="lazy">
 {%- endmacro %}
 
-{% macro judul(item) -%}{{ item.deskripsi.split('.')[0][:40] }}{%- endmacro %}
+{% macro judul(item) -%}{{ (item.nama or item.deskripsi.split('.')[0])[:40] }}{%- endmacro %}
 
 {% macro tgl(dt) -%}{{ dt.strftime('%d %b %Y') if dt else '—' }}{%- endmacro %}
 

@@ -1,0 +1,2 @@
+{# Pesan galat untuk satu kolom. Pakai: {% with f="lokasi" %}{% include "_galat.html" %}{% endwith %} #}
+{% if errors and errors[f] %}<div class="ll-galat" id="galat-{{ f }}"><i class="bi bi-exclamation-circle"></i><span>{{ errors[f] }}</span></div>{% endif %}

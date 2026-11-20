@@ -99,14 +99,14 @@ def main():
         temuan = {}
         for i, (bid, (desk, kat, ciri)) in enumerate(BARANG.items()):
             nama, vek = simpan_foto(next((DATA / "temuan").glob(bid + "_*")))
-            it = Item(user_id=rahul.id, jenis="temuan", kategori=kat, deskripsi=desk, ciri_khusus=ciri, lokasi=LOKASI[i % len(LOKASI)],
+            it = Item(user_id=rahul.id, jenis="temuan", kategori=kat, nama=desk, deskripsi=desk, ciri_khusus=ciri, lokasi=LOKASI[i % len(LOKASI)],
                       waktu_kejadian=now - timedelta(days=1 + i % 6, hours=i % 5), path_foto=nama, vektor_fitur=vek, status="Ditemukan")
             db.add(it)
             temuan[bid] = it
             print(f"  temuan {bid} {desk}")
         for j, desk in enumerate(PENGECOH, start=1):
             nama, vek = simpan_foto(DATA / "temuan" / f"x{j:02d}.jpg")
-            db.add(Item(user_id=rahul.id, jenis="temuan", kategori=KATEGORI_PENGECOH.get(j, "Lainnya"), deskripsi=desk,
+            db.add(Item(user_id=rahul.id, jenis="temuan", kategori=KATEGORI_PENGECOH.get(j, "Lainnya"), nama=desk, deskripsi=desk,
                         ciri_khusus="-", lokasi=LOKASI[j % len(LOKASI)], waktu_kejadian=now - timedelta(days=j % 7, hours=j % 9),
                         path_foto=nama, vektor_fitur=vek, status="Ditemukan"))
         print(f"  {len(PENGECOH)} pengecoh")
@@ -117,7 +117,7 @@ def main():
             src = next((DATA / "hilang").glob(bid + "_*"))
             nama, vek = simpan_foto(src)
             ref = temuan[bid]
-            it = Item(user_id=alivia.id, jenis="hilang", kategori=kat, deskripsi=desk, ciri_khusus=ciri, lokasi=ref.lokasi,
+            it = Item(user_id=alivia.id, jenis="hilang", kategori=kat, nama=desk, deskripsi=desk, ciri_khusus=ciri, lokasi=ref.lokasi,
                       waktu_kejadian=ref.waktu_kejadian - timedelta(days=1), path_foto=nama, vektor_fitur=vek, status="Hilang")
             db.add(it)
             hilang[bid] = it

@@ -1,0 +1,11 @@
+{# Kolom bukti klaim, dipakai di rekomendasi.html dan klaim.html #}
+<label class="form-label" for="jawaban_ciri"><i class="bi bi-lock-fill" style="color:var(--verif)"></i> Ciri khusus barangmu <span class="ll-wajib">wajib</span></label>
+<div class="ll-muted small mb-2">Sebutkan sesuatu yang tidak terlihat di foto: isi, stiker, goresan, tulisan, atau kerusakan kecil. Admin mencocokkannya dengan ciri yang disimpan penemu.</div>
+<textarea class="form-control{{ ' is-invalid' if errors and errors.jawaban_ciri }}" id="jawaban_ciri" name="jawaban_ciri" rows="2" maxlength="300" placeholder="Contoh: ada nama saya di bagian dalam tutup">{{ form.jawaban_ciri or '' }}</textarea>
+{% with f="jawaban_ciri" %}{% include "_galat.html" %}{% endwith %}
+<label class="form-label mt-3" for="keterangan">Cerita singkat <span class="ll-opsional">opsional</span></label>
+<textarea class="form-control" id="keterangan" name="keterangan" rows="2" maxlength="500" placeholder="Contoh: hilang sekitar jam 3 sore saat menunggu kereta, isinya kartu mahasiswa">{{ form.keterangan or '' }}</textarea>
+<label class="form-label mt-3" for="bukti_foto">Foto bukti kepemilikan <span class="ll-opsional">opsional, sangat membantu</span></label>
+<input class="form-control{{ ' is-invalid' if errors and errors.bukti_foto }}" id="bukti_foto" type="file" name="bukti_foto" accept="image/*,.heic,.heif">
+{% with f="bukti_foto" %}{% include "_galat.html" %}{% endwith %}
+<div class="form-text">Misalnya foto lama kamu bersama barang itu, nota atau kotak pembelian, atau tangkapan layar perangkat (untuk earbud/HP). Hanya dilihat admin.</div>

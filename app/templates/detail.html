@@ -2,18 +2,34 @@
 {% from "_macros.html" import badge, foto, judul, tgl, flash_box %}
 {% block title %}{{ judul(item) }} · LOSTLINK{% endblock %}
 {% block content %}
-{% set urutan = ['Hilang', 'Ditemukan', 'Diverifikasi', 'Dikembalikan'] %}
-{% set posisi = urutan.index(item.status) %}
-<a href="/saya" class="small fw-semibold text-decoration-none"><i class="bi bi-arrow-left"></i> Kembali ke status laporan</a>
-<div class="d-flex align-items-center gap-3 mt-2"><h1 class="h2 mb-0">{{ judul(item) }}</h1>{{ badge(item.status) }}</div>
+{# Tahapan dibedakan per jenis: barang temuan tidak pernah "hilang" dari sisi penemu #}
+{% if item.jenis == 'hilang' %}
+  {% set tahap = [('Hilang', 'Dilaporkan hilang'), ('Ditemukan', 'Ketemu & diklaim'), ('Diverifikasi', 'Diperiksa admin'), ('Dikembalikan', 'Dikembalikan')] %}
+  {% set posisi = {'Hilang': 0, 'Diverifikasi': 2, 'Dikembalikan': 3}[item.status] %}
+{% else %}
+  {% set tahap = [('Ditemukan', 'Ditemukan, menunggu pemilik'), ('Diverifikasi', 'Diklaim, diperiksa admin'), ('Dikembalikan', 'Dikembalikan')] %}
+  {% set posisi = {'Ditemukan': 0, 'Diverifikasi': 1, 'Dikembalikan': 2}[item.status] %}
+{% endif %}
+{% set kb = kembali(request, '/saya', 'Kembali ke laporanku') if milik_saya else kembali(request, '/laporan?jenis=' ~ item.jenis, 'Kembali ke pencarian') %}
+<a href="{{ kb[0] }}" class="ll-kembali"><i class="bi bi-arrow-left"></i> {{ kb[1] }}</a>
+<div class="d-flex align-items-center flex-wrap gap-2 gap-md-3 mt-2"><h1 class="h2 mb-0 ll-judul">{{ judul(item) }}</h1>{{ badge(item.status) }}</div>
 <p class="ll-muted">Laporan barang {{ item.jenis }} · dibuat {{ tgl(item.dibuat_pada) }} · ID #{{ '%04d' % item.id }}</p>
 {{ flash_box(flash) }}
+<div class="ll-peran {{ item.jenis }} mb-4">
+  <i class="bi bi-{{ 'search-heart' if item.jenis == 'hilang' else 'box2-heart' }}"></i>
+  <div>
+  {% if milik_saya and item.jenis == 'hilang' %}<strong>Ini laporan barangmu yang hilang.</strong> Cari barang temuan yang cocok lewat <strong>Lihat rekomendasi</strong>, lalu klaim barang temuan itu.
+  {% elif milik_saya %}<strong>Ini barang yang kamu temukan.</strong> Pemiliknya yang akan mengklaim dengan menyebut ciri khusus; kamu cukup menunggu kabar dari admin.
+  {% elif item.jenis == 'temuan' %}<strong>Barang ini ditemukan oleh orang lain</strong> dan sedang menunggu pemiliknya. Kalau ini barangmu, tekan <strong>Ini barangku</strong>.
+  {% else %}<strong>Barang ini sedang dicari pemiliknya.</strong> Kalau kamu menemukannya, laporkan sebagai barang temuan agar bisa dicocokkan.{% endif %}
+  </div>
+</div>
 <div class="row g-4">
   <div class="col-lg-5">
     <div class="ll-card p-4">
       <div class="ll-label mb-2">Data barang</div>
       {{ foto(item, 300) }}
-      {% for k, v in [('Kategori', item.kategori), ('Lokasi', item.lokasi), ('Perkiraan waktu', item.waktu_kejadian.strftime('%d %b %Y, %H.%M')), ('Ciri-ciri umum', item.deskripsi)] %}
+      {% for k, v in [('Kategori', item.kategori), ('Lokasi', item.lokasi), ('Perkiraan waktu', item.waktu_kejadian.strftime('%d %b %Y, %H.%M') if item.waktu_diketahui else 'Belum diisi'), ('Nama barang', item.nama or 'Belum diisi'), ('Ciri-ciri umum', item.deskripsi if item.deskripsi_diisi else 'Belum diisi')] %}
       <div class="mt-3"><div class="ll-muted small">{{ k }}</div><div class="fw-medium">{{ v }}</div></div>
       {% endfor %}
       <div class="ll-secret small mt-3">Ciri khusus dan nomor kontak tidak ditampilkan di halaman ini. Ciri khusus hanya dipakai admin untuk memverifikasi klaim.</div>
@@ -22,18 +38,20 @@
   <div class="col-lg-7">
     <div class="ll-card p-4 mb-4">
       <h2 class="h5 mb-1">Status barang</h2>
-      <p class="ll-muted small">Pelacakan 4 tahap: Hilang → Ditemukan → Diverifikasi → Dikembalikan</p>
+      <p class="ll-muted small">{{ 'Perjalanan barang hilang sampai kembali ke pemiliknya' if item.jenis == 'hilang' else 'Perjalanan barang temuan sampai kembali ke pemiliknya' }}</p>
       <div class="ll-steps my-4">
-        {% for s in urutan %}
+        {% for kode, nama in tahap %}
         {% set kelas = 'done' if loop.index0 < posisi or item.status == 'Dikembalikan' else ('now' if loop.index0 == posisi else 'next') %}
-        <div class="ll-step {{ kelas }}"><div class="dot">{% if kelas == 'done' %}✓{% else %}{{ loop.index }}{% endif %}</div><div class="name">{{ s }}</div></div>
+        <div class="ll-step {{ kelas }}"><div class="dot">{% if kelas == 'done' %}✓{% else %}{{ loop.index }}{% endif %}</div><div class="name">{{ nama }}</div></div>
         {% endfor %}
       </div>
       <div class="ll-next mt-3">
         <i class="bi bi-signpost-2"></i>
         <div>
-        {% if item.status == 'Hilang' %}<strong>Langkah berikutnya:</strong> buka Rekomendasi dan ajukan klaim bila ada barangmu. Laporanmu tetap aktif; setiap barang temuan baru ikut dicocokkan saat kamu membukanya lagi.
-        {% elif item.status == 'Ditemukan' %}<strong>Langkah berikutnya:</strong> barang ini menunggu pemiliknya. Pemilik akan menyebutkan ciri khusus, lalu admin memverifikasi.
+        {% if item.status == 'Hilang' and milik_saya %}<strong>Langkah berikutnya:</strong> buka rekomendasi dan ajukan klaim bila ada barangmu. Barang temuan baru ikut dicocokkan setiap kali kamu membukanya.
+        {% elif item.status == 'Hilang' %}<strong>Pemiliknya masih mencari.</strong> Kalau kamu menemukan barang ini, tekan Aku menemukannya dan unggah fotonya.
+        {% elif item.status == 'Ditemukan' and milik_saya %}<strong>Menunggu pemiliknya.</strong> Pemilik akan menyebutkan ciri khusus, lalu admin memverifikasi. Kamu akan melihat statusnya berubah di halaman ini.
+        {% elif item.status == 'Ditemukan' %}<strong>Kalau ini barangmu:</strong> tekan Ini barangku, sebutkan ciri khusus yang hanya kamu tahu, lalu admin memeriksanya.
         {% elif item.status == 'Diverifikasi' %}<strong>Sedang diperiksa admin.</strong> Admin biasanya memeriksa klaim dalam 1×24 jam. Setelah disetujui, kontak penemu muncul di halaman ini.
         {% else %}<strong>Barang sudah kembali ke pemiliknya.</strong> Terima kasih sudah memakai LOSTLINK.{% endif %}
         </div>
@@ -41,11 +59,17 @@
       <hr>
       <div class="fw-semibold mb-2">Riwayat</div>
       {% for waktu, teks in riwayat %}
-      <div class="d-flex gap-3 small mb-2"><span class="ll-muted" style="width:150px">{{ waktu.strftime('%d %b %Y, %H.%M') if waktu else '' }}</span><span class="fw-medium">{{ teks }}</span></div>
+      <div class="d-flex gap-3 small mb-2 ll-riwayat"><span class="ll-muted ll-riwayat-waktu">{{ waktu.strftime('%d %b %Y, %H.%M') if waktu else '' }}</span><span class="fw-medium">{{ teks }}</span></div>
       {% endfor %}
       <div class="d-flex flex-wrap gap-2 mt-3">
       {% if milik_saya and item.jenis == 'hilang' and item.status == 'Hilang' %}
       <a href="/rekomendasi/{{ item.id }}" class="btn btn-ll"><i class="bi bi-stars"></i> Lihat rekomendasi</a>
+      {% endif %}
+      {% if not milik_saya and item.jenis == 'hilang' and item.status == 'Hilang' and user.peran != 'admin' %}
+      <a href="/lapor?jenis=temuan" class="btn btn-temuan"><i class="bi bi-box2-heart"></i> Aku menemukannya</a>
+      {% endif %}
+      {% if not milik_saya and item.jenis == 'temuan' and item.status == 'Ditemukan' and user.peran != 'admin' %}
+      <a href="/barang/{{ item.id }}/klaim" class="btn btn-ll"><i class="bi bi-hand-index-thumb"></i> Ini barangku</a>
       {% endif %}
       {% if milik_saya and item.status in ('Hilang', 'Ditemukan') %}
       <a href="/laporan/{{ item.id }}/ubah" class="btn btn-ll-outline"><i class="bi bi-pencil"></i> Lengkapi detail</a>
@@ -58,7 +82,7 @@
       {% if kontak %}
       <div class="ll-secret" style="background:var(--temuan-soft)"><div class="fw-bold"><i class="bi bi-person-check-fill" style="color:var(--temuan)"></i> {{ kontak.nama }}</div><div>WhatsApp: <strong>{{ kontak.no_kontak }}</strong></div><div class="ll-muted small">Barang ditemukan di {{ kontak.lokasi }}. Hubungi penemu untuk mengambil barang.</div></div>
       {% else %}
-      <div class="ll-secret kunci d-flex gap-3 align-items-center"><i class="bi bi-lock-fill fs-3" style="color:var(--verif)"></i><div><div class="fw-semibold">Terkunci</div><div class="ll-muted small">Nomor kontak penemu dibuka setelah admin menyetujui pengembalian, biasanya dalam 1×24 jam setelah klaim.</div></div></div>
+      <div class="ll-secret kunci d-flex gap-3 align-items-center"><i class="bi bi-lock-fill fs-3" style="color:var(--verif)"></i><div><div class="fw-semibold">Terkunci</div><div class="ll-muted small">Nomor penemu dibuka setelah admin menyetujui klaimmu, biasanya dalam 1×24 jam. Ini mencegah barang diambil orang yang hanya mengaku-ngaku.</div></div></div>
       {% endif %}
     </div>
     {% endif %}

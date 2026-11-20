@@ -1,6 +1,7 @@
+{# Ringkasan galat di atas form. Pesan lengkap tiap kolom muncul tepat di bawah kolomnya (lihat _galat.html). #}
 {% if errors %}
-<div class="ll-note mb-3" role="alert">
-  <div class="judul"><i class="bi bi-info-circle-fill"></i>{% if errors|length == 1 %}Sedikit lagi.{% else %}Masih ada {{ errors|length }} hal yang perlu dilengkapi.{% endif %}</div>
-  <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+<div class="ll-note mb-3" role="alert" id="ringkasan-galat" tabindex="-1">
+  <div class="judul"><i class="bi bi-info-circle-fill"></i>{% if errors|length == 1 %}Sedikit lagi, ada 1 hal yang perlu dicek.{% else %}Masih ada {{ errors|length }} hal yang perlu dicek.{% endif %}</div>
+  <div class="small mt-1">Kolom yang perlu diperbaiki ditandai di bawah. Isian lain yang sudah kamu tulis tetap tersimpan.</div>
 </div>
 {% endif %}

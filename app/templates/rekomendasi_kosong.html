@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Rekomendasi · LOSTLINK{% endblock %}
+{% block content %}
+<div class="ll-card p-4 text-center mx-auto" style="max-width:520px">
+  <i class="bi bi-stars fs-1" style="color:var(--indigo)"></i>
+  <h1 class="h4 mt-2">Apa itu Rekomendasi?</h1>
+  <p class="ll-muted">Rekomendasi menampilkan <strong>5 barang temuan yang fotonya paling mirip</strong> dengan barangmu yang hilang. Kamu belum punya laporan barang hilang, jadi belum ada yang bisa dicocokkan.</p>
+  <div class="d-grid gap-2 mt-3">
+    <a class="btn btn-ll" href="/lapor?jenis=hilang"><i class="bi bi-search-heart"></i> Laporkan barang hilang</a>
+    <a class="btn btn-ll-outline" href="/laporan">Lihat semua barang temuan</a>
+  </div>
+</div>
+{% endblock %}

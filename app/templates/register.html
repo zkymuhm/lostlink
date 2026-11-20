@@ -9,27 +9,31 @@
       <h1 class="h2 mb-1">Buat akun</h1>
       <p class="ll-muted mb-4">Akun dipakai untuk melapor, mengajukan klaim, dan melihat status barang.</p>
       {% include "_catatan.html" %}
-      <form method="post" action="/register" novalidate>
+      <form method="post" action="/register">
         <div class="mb-3">
           <label class="form-label" for="nama">Nama lengkap</label>
-          <input class="form-control" id="nama" name="nama" value="{{ form.nama or '' }}" placeholder="Contoh: Alivia Wahyu" required>
+          <input class="form-control{{ ' is-invalid' if errors.nama }}" id="nama" name="nama" value="{{ form.nama or '' }}" placeholder="Contoh: Alivia Wahyu" required>
+          {% with f="nama" %}{% include "_galat.html" %}{% endwith %}
         </div>
         <div class="mb-3">
           <label class="form-label" for="email">Email</label>
-          <input class="form-control" id="email" name="email" type="email" value="{{ form.email or '' }}" placeholder="nama@email.com" required>
+          <input class="form-control{{ ' is-invalid' if errors.email }}" id="email" name="email" type="email" value="{{ form.email or '' }}" placeholder="nama@email.com" required>
+          {% with f="email" %}{% include "_galat.html" %}{% endwith %}
         </div>
         <div class="mb-3">
           <label class="form-label" for="no_kontak">Nomor WhatsApp</label>
-          <input class="form-control" id="no_kontak" name="no_kontak" value="{{ form.no_kontak or '' }}" placeholder="08xx xxxx xxxx" required>
+          <input class="form-control{{ ' is-invalid' if errors.no_kontak }}" id="no_kontak" inputmode="tel" name="no_kontak" value="{{ form.no_kontak or '' }}" placeholder="08xx xxxx xxxx" required>
+          {% with f="no_kontak" %}{% include "_galat.html" %}{% endwith %}
           <div class="form-text"><i class="bi bi-lock"></i> Hanya dibuka ke pemilik setelah klaim disetujui admin.</div>
         </div>
-        <div class="row g-3 mb-3">
-          <div class="col-sm"><label class="form-label" for="password">Kata sandi</label><input class="form-control" id="password" name="password" type="password" placeholder="Minimal 8 karakter" required></div>
-          <div class="col-sm"><label class="form-label" for="password2">Ulangi kata sandi</label><input class="form-control" id="password2" name="password2" type="password" required></div>
+        <div class="row g-3 mb-3 ll-sandi">
+          <div class="col-sm"><label class="form-label" for="password">Kata sandi</label><input class="form-control{{ ' is-invalid' if errors.password }}" id="password" name="password" type="password" value="{{ form.password or '' }}" placeholder="Minimal 8 karakter" minlength="8" autocomplete="new-password" required>{% with f="password" %}{% include "_galat.html" %}{% endwith %}</div>
+          <div class="col-sm"><label class="form-label" for="password2">Ulangi kata sandi</label><input class="form-control{{ ' is-invalid' if errors.password2 }}" id="password2" name="password2" type="password" value="{{ form.password or '' }}" minlength="8" autocomplete="new-password" required>{% with f="password2" %}{% include "_galat.html" %}{% endwith %}</div>
         </div>
         <div class="form-check mb-4">
-          <input class="form-check-input" type="checkbox" id="setuju" name="setuju" value="1">
+          <input class="form-check-input{{ ' is-invalid' if errors.setuju }}" type="checkbox" id="setuju" name="setuju" value="1" required>
           <label class="form-check-label small" for="setuju">Saya setuju data saya dipakai untuk proses pengembalian barang.</label>
+          {% with f="setuju" %}{% include "_galat.html" %}{% endwith %}
         </div>
         <button class="btn btn-ll w-100">Daftar</button>
       </form>
@@ -37,4 +41,14 @@
     </div>
   </div>
 </div>
+<script>
+(function () {
+  var a = document.getElementById('password'), b = document.getElementById('password2');
+  function cek() { b.setCustomValidity(b.value && a.value !== b.value ? 'Ulangi kata sandi belum sama.' : ''); }
+  a.addEventListener('input', cek); b.addEventListener('input', cek);
+  var c = document.getElementById('setuju');
+  function cekC() { c.setCustomValidity(c.checked ? '' : 'Centang persetujuan dulu untuk melanjutkan.'); }
+  c.addEventListener('change', cekC); cekC();
+})();
+</script>
 {% endblock %}

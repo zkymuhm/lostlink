@@ -34,6 +34,7 @@ class Item(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     jenis: Mapped[str] = mapped_column(String(10))
     kategori: Mapped[str] = mapped_column(String(20))
+    nama: Mapped[str | None] = mapped_column(String(60), nullable=True, default="")
     deskripsi: Mapped[str] = mapped_column(Text)
     ciri_khusus: Mapped[str] = mapped_column(Text)
     lokasi: Mapped[str] = mapped_column(String(120))
@@ -44,6 +45,23 @@ class Item(Base):
     dibuat_pada: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
     pelapor: Mapped[User] = relationship(back_populates="items")
+
+    @property
+    def deskripsi_diisi(self) -> bool:
+        """False bila ciri-ciri tidak diisi pelapor (sistem membuat judul otomatis "Barang x di y")."""
+        d = (self.deskripsi or "").strip()
+        lok = (self.lokasi or "").strip()
+        otomatis = {f"Barang {(self.kategori or '').lower()} di {lok}".lower(), (self.nama or "").strip().lower()}
+        if d.lower() in otomatis or (d.lower().startswith("barang ") and d.lower().endswith(lok.lower()) and len(d) <= len(lok) + 25):
+            return False
+        return bool(d)
+
+    @property
+    def waktu_diketahui(self) -> bool:
+        """False bila pelapor mengosongkan kolom waktu (sistem mengisi waktu saat melapor)."""
+        if self.dibuat_pada is None:
+            return True
+        return abs((self.dibuat_pada - self.waktu_kejadian).total_seconds()) > 600
 
 
 class Match(Base):
@@ -64,6 +82,8 @@ class Verification(Base):
     match_id: Mapped[int] = mapped_column(ForeignKey("matches.id"))
     claimant_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     jawaban_ciri: Mapped[str] = mapped_column(Text)
+    keterangan: Mapped[str | None] = mapped_column(Text, nullable=True)  # cerita singkat pemilik (opsional)
+    bukti_foto: Mapped[str | None] = mapped_column(String(255), nullable=True)  # foto bukti kepemilikan (opsional)
     hasil: Mapped[str | None] = mapped_column(String(15), nullable=True)
     keputusan_admin: Mapped[str | None] = mapped_column(String(15), nullable=True)
     admin_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)

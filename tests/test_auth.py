@@ -89,3 +89,14 @@ def test_akun_nonaktif_tidak_bisa_login():
         db.commit()
     r = login(client(), "x@test.id", "rahasia123")
     assert r.status_code == 401 and "dinonaktifkan" in r.text
+
+
+def test_sandi_tidak_hilang_bila_hanya_persetujuan_belum_dicentang():
+    data = {**DATA, "email": "lupa.centang@test.id"}
+    data.pop("setuju")
+    r = client().post("/register", data=data)
+    assert r.status_code == 400
+    assert 'value="rahasia123"' in r.text and "Centang persetujuan" in r.text
+    # sandi yang salah tetap harus diketik ulang
+    r = client().post("/register", data={**data, "password2": "beda12345"})
+    assert 'value="rahasia123"' not in r.text

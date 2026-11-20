@@ -26,13 +26,19 @@ def _klaim_rows(db: Session, status: str):
 
 
 @router.get("/klaim")
-def daftar_klaim(request: Request, id: int | None = None, status: str = "menunggu",
+def daftar_klaim(request: Request, id: int | None = None, status: str = "menunggu", q: str = "",
                  admin: User = Depends(require_admin), db: Session = Depends(get_db)):
     rows = _klaim_rows(db, status)
+    if q.strip():
+        k = q.strip().lower()
+        rows = [r for r in rows if k in r["pengklaim"].nama.lower() or k in (r["found"].nama or "").lower()
+                or k in r["found"].deskripsi.lower() or k in r["lost"].deskripsi.lower()]
+    jumlah = {"menunggu": db.scalar(select(func.count(Verification.id)).where(Verification.keputusan_admin.is_(None))),
+              "selesai": db.scalar(select(func.count(Verification.id)).where(Verification.keputusan_admin.is_not(None)))}
     pilih = next((r for r in rows if r["v"].id == id), rows[0] if rows else None)
     return templates.TemplateResponse(request, "admin/klaim.html", {
-        "user": admin, "rows": rows, "pilih": pilih, "status": status, "aktif": "Persetujuan klaim",
-        "flash": request.session.pop("flash", None)})
+        "user": admin, "rows": rows, "pilih": pilih, "status": status, "q": q, "jumlah": jumlah,
+        "aktif": "Persetujuan klaim", "flash": request.session.pop("flash", None)})
 
 
 def _putuskan(db: Session, vid: int, admin: User, setuju: bool) -> Verification:
@@ -72,15 +78,17 @@ def semua_laporan(request: Request, q: str = "", jenis: str = "", status: str = 
     stmt = select(Item, User).join(User, User.id == Item.user_id)
     if q.strip():
         like = f"%{q.strip()}%"
-        stmt = stmt.where(or_(Item.deskripsi.ilike(like), User.nama.ilike(like), Item.lokasi.ilike(like)))
+        stmt = stmt.where(or_(Item.nama.ilike(like), Item.deskripsi.ilike(like), User.nama.ilike(like), Item.lokasi.ilike(like)))
     if jenis:
         stmt = stmt.where(Item.jenis == jenis)
     if status:
         stmt = stmt.where(Item.status == status)
     rows = db.execute(stmt.order_by(Item.dibuat_pada.desc())).all()
-    total = db.scalar(select(func.count(Item.id)))
+    jumlah = {"semua": db.scalar(select(func.count(Item.id))),
+              "hilang": db.scalar(select(func.count(Item.id)).where(Item.jenis == "hilang")),
+              "temuan": db.scalar(select(func.count(Item.id)).where(Item.jenis == "temuan"))}
     return templates.TemplateResponse(request, "admin/laporan.html", {
-        "user": admin, "rows": rows, "total": total, "f": {"q": q, "jenis": jenis, "status": status},
+        "user": admin, "rows": rows, "jumlah": jumlah, "f": {"q": q, "jenis": jenis, "status": status},
         "aktif": "Semua laporan", "flash": request.session.pop("flash", None)})
 
 
@@ -106,8 +114,11 @@ def pengguna(request: Request, q: str = "", admin: User = Depends(require_admin)
         like = f"%{q.strip()}%"
         stmt = stmt.where(or_(User.nama.ilike(like), User.email.ilike(like)))
     rows = db.execute(stmt.order_by(User.dibuat_pada)).all()
+    semua = db.scalar(select(func.count(User.id)))
+    aktif = db.scalar(select(func.count(User.id)).where(User.aktif.is_(True)))
+    jumlah = {"semua": semua, "aktif": aktif, "nonaktif": semua - aktif}
     return templates.TemplateResponse(request, "admin/pengguna.html", {
-        "user": admin, "rows": rows, "q": q, "aktif": "Pengguna", "flash": request.session.pop("flash", None)})
+        "user": admin, "rows": rows, "q": q, "jumlah": jumlah, "aktif": "Pengguna", "flash": request.session.pop("flash", None)})
 
 
 @router.post("/pengguna/{uid}/nonaktif")

@@ -8,22 +8,21 @@
     <div class="col-lg-6">
       <p class="mb-2 fw-bold" style="color:var(--indigo-dark)">Halo, {{ user.nama.split(' ')[0] }}</p>
       <h1 class="mb-3">Ada yang hilang atau kamu temukan?</h1>
-      <p class="mb-0">Unggah fotonya. LOSTLINK mencarikan barang yang paling mirip, lalu pemilik membuktikan kepemilikan lewat ciri khusus.</p>
+      <p class="mb-0 d-none d-sm-block">Unggah fotonya. LOSTLINK mencarikan barang yang paling mirip, lalu pemilik membuktikan kepemilikan lewat ciri khusus.</p>
     </div>
     <div class="col-lg-6">
       <div class="row g-3">
-        <div class="col-6"><a href="/lapor?jenis=hilang" class="ll-action hilang"><i class="bi bi-search-heart"></i><strong>Barangku hilang</strong><span>Laporkan dan lihat barang temuan yang mirip</span></a></div>
-        <div class="col-6"><a href="/lapor?jenis=temuan" class="ll-action temuan"><i class="bi bi-box2-heart"></i><strong>Aku menemukan barang</strong><span>Bantu barang ini kembali ke pemiliknya</span></a></div>
+        <div class="col-12 col-sm-6 d-flex"><a href="/lapor?jenis=hilang" class="ll-action hilang w-100"><i class="bi bi-search-heart"></i><strong>Barangku hilang</strong><span>Laporkan dan lihat barang temuan yang mirip</span></a></div>
+        <div class="col-12 col-sm-6 d-flex"><a href="/lapor?jenis=temuan" class="ll-action temuan w-100"><i class="bi bi-box2-heart"></i><strong>Aku menemukan barang</strong><span>Laporkan dan bantu barang kembali ke pemiliknya</span></a></div>
       </div>
     </div>
   </div>
 </section>
 
-<form class="ll-card p-3 mb-4 row g-3 align-items-end mx-0" action="/laporan" method="get">
-  <div class="col-md-6"><label class="form-label" for="q">Cari barang</label><input class="form-control" id="q" name="q" placeholder="Contoh: dompet kulit, helm putih"></div>
-  <div class="col-6 col-md-2"><label class="form-label" for="kat">Kategori</label><select class="form-select" id="kat" name="kategori"><option value="">Semua</option>{% for k in kategori_list %}<option>{{ k }}</option>{% endfor %}</select></div>
-  <div class="col-6 col-md-2"><label class="form-label" for="lok">Lokasi</label><input class="form-control" id="lok" name="lokasi" placeholder="Semua lokasi"></div>
-  <div class="col-md-2"><button class="btn btn-ll w-100"><i class="bi bi-search"></i> Cari</button></div>
+<form class="ll-cari-cepat mb-4" action="/laporan" method="get" role="search">
+  <i class="bi bi-search"></i>
+  <input class="form-control" name="q" aria-label="Cari barang" placeholder="Cari barang…">
+  <button class="btn btn-ll">Cari</button>
 </form>
 
 <div class="row g-4">
@@ -33,8 +32,9 @@
       {% for it in saya %}
       <a href="/laporan/{{ it.id }}" class="ll-card ll-card-link d-flex align-items-center gap-3 p-2 mb-2">
         <img src="/foto/{{ it.path_foto }}" class="ll-thumb" alt="">
-        <div class="flex-grow-1" style="min-width:0"><div class="fw-bold text-truncate">{{ judul(it) }}</div><div class="ll-muted small text-truncate"><i class="bi bi-geo-alt"></i> {{ it.lokasi }}, {{ tgl(it.waktu_kejadian) }}</div></div>
-        {{ badge(it.status) }}<i class="bi bi-chevron-right ll-muted pe-2"></i>
+        <div class="flex-grow-1" style="min-width:0"><div class="fw-bold ll-2baris">{{ judul(it) }}</div><div class="ll-muted small text-truncate"><i class="bi bi-geo-alt"></i> {{ it.lokasi }}, {{ tgl(it.waktu_kejadian) }}</div>
+          <div class="d-sm-none mt-1">{{ badge(it.status) }}</div></div>
+        <span class="d-none d-sm-inline-flex">{{ badge(it.status) }}</span><i class="bi bi-chevron-right ll-muted pe-2"></i>
       </a>
       {% else %}
       <div class="text-center py-4"><i class="bi bi-inbox fs-1 ll-muted"></i><p class="ll-muted mb-3">Belum ada laporan.</p><a href="/lapor" class="btn btn-ll">Buat laporan pertama</a></div>

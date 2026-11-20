@@ -21,7 +21,7 @@ def _home_for(user: User) -> str:
 
 @router.get("/register")
 def register_form(request: Request):
-    return templates.TemplateResponse(request, "register.html", {"errors": [], "form": {}})
+    return templates.TemplateResponse(request, "register.html", {"errors": {}, "form": {}})
 
 
 @router.post("/register")
@@ -36,23 +36,27 @@ def register(
     db: Session = Depends(get_db),
 ):
     nama, email, no_kontak = nama.strip(), email.strip().lower(), no_kontak.strip()
-    errors = []
+    errors: dict[str, str] = {}
     if not nama:
-        errors.append("Nama lengkapnya belum diisi.")
+        errors["nama"] = "Nama lengkapnya belum diisi."
     if not EMAIL_RE.match(email):
-        errors.append("Format email belum tepat, contohnya nama@email.com.")
+        errors["email"] = "Format email belum tepat, contohnya nama@email.com."
     elif db.scalar(select(User).where(User.email == email)):
-        errors.append("Email ini sudah terdaftar. Coba masuk saja.")
+        errors["email"] = "Email ini sudah terdaftar. Coba masuk saja, atau pakai email lain."
     if not re.fullmatch(r"[0-9+ ]{8,20}", no_kontak):
-        errors.append("Nomor WhatsApp berisi 8–20 angka, contohnya 081234567890.")
+        errors["no_kontak"] = "Nomor WhatsApp berisi 8–20 angka, contohnya 081234567890."
     if len(password) < 8:
-        errors.append("Kata sandi minimal 8 karakter, ya.")
+        errors["password"] = f"Kata sandi minimal 8 karakter, ya (sekarang {len(password)})."
     if password != password2:
-        errors.append("Ulangi kata sandi tidak sama dengan kata sandi di sebelahnya.")
+        errors["password2"] = "Ulangi kata sandi tidak sama dengan kata sandi di sebelahnya."
     if not setuju:
-        errors.append("Centang persetujuan penggunaan data untuk melanjutkan.")
+        errors["setuju"] = "Centang persetujuan penggunaan data untuk melanjutkan."
     if errors:
         form = {"nama": nama, "email": email, "no_kontak": no_kontak}
+        # Sandi yang sudah benar diisikan kembali agar pengguna tidak perlu mengetik ulang
+        # hanya karena isian lain (mis. centang persetujuan) yang keliru.
+        if "password" not in errors and "password2" not in errors:
+            form["password"] = password
         return templates.TemplateResponse(request, "register.html", {"errors": errors, "form": form}, status_code=400)
 
     db.add(User(nama=nama, email=email, no_kontak=no_kontak, password_hash=hash_password(password), peran="pengguna"))
