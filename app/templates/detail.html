@@ -18,7 +18,9 @@
 <div class="ll-peran {{ item.jenis }} mb-4">
   <i class="bi bi-{{ 'search-heart' if item.jenis == 'hilang' else 'box2-heart' }}"></i>
   <div>
-  {% if milik_saya and item.jenis == 'hilang' %}<strong>Ini laporan barangmu yang hilang.</strong> Cari barang temuan yang cocok lewat <strong>Lihat rekomendasi</strong>, lalu klaim barang temuan itu.
+  {% if milik_saya and item.jenis == 'hilang' and item.status == 'Dikembalikan' %}<strong>Barangmu sudah ditemukan.</strong> Hubungi penemunya lewat <a href="#kontak" class="fw-bold">kontak penemu</a> untuk mengambil barangmu.
+  {% elif milik_saya and item.jenis == 'hilang' and item.status == 'Diverifikasi' %}<strong>Klaimmu sedang diperiksa admin.</strong> Kontak penemu muncul di halaman ini setelah klaim disetujui.
+  {% elif milik_saya and item.jenis == 'hilang' %}<strong>Ini laporan barangmu yang hilang.</strong> Cari barang temuan yang cocok lewat <strong>Lihat rekomendasi</strong>, lalu klaim barang temuan itu.
   {% elif milik_saya %}<strong>Ini barang yang kamu temukan.</strong> Pemiliknya yang akan mengklaim dengan menyebut ciri khusus; kamu cukup menunggu kabar dari admin.
   {% elif item.jenis == 'temuan' %}<strong>Barang ini ditemukan oleh orang lain</strong> dan sedang menunggu pemiliknya. Kalau ini barangmu, tekan <strong>Ini barangku</strong>.
   {% else %}<strong>Barang ini sedang dicari pemiliknya.</strong> Kalau kamu menemukannya, laporkan sebagai barang temuan agar bisa dicocokkan.{% endif %}
@@ -77,7 +79,7 @@
       </div>
     </div>
     {% if milik_saya and item.jenis == 'hilang' %}
-    <div class="ll-card p-4">
+    <div class="ll-card p-4" id="kontak">
       <h2 class="h5">Kontak penemu</h2>
       {% if kontak %}
       <div class="ll-secret" style="background:var(--temuan-soft)"><div class="fw-bold"><i class="bi bi-person-check-fill" style="color:var(--temuan)"></i> {{ kontak.nama }}</div><div>WhatsApp: <strong>{{ kontak.no_kontak }}</strong></div><div class="ll-muted small">Barang ditemukan di {{ kontak.lokasi }}. Hubungi penemu untuk mengambil barang.</div></div>

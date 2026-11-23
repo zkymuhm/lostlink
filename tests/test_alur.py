@@ -90,7 +90,8 @@ def test_alur_lengkap():
     assert r.status_code == 303
     with SessionLocal() as db:
         assert db.get(Item, lost_id).status == "Diverifikasi" and db.get(Item, found_id).status == "Diverifikasi"
-    assert "Terkunci" in pemilik.get(f"/laporan/{lost_id}").text
+    halaman = pemilik.get(f"/laporan/{lost_id}").text
+    assert "Terkunci" in halaman and "Klaimmu sedang diperiksa admin" in halaman
     assert pemilik.post("/klaim", data={"match_id": match_id, "jawaban_ciri": "lagi"}).status_code == 409
 
     # admin melihat klaim lalu menyetujui -> Dikembalikan, kontak terbuka
@@ -105,6 +106,7 @@ def test_alur_lengkap():
         assert db.get(Item, lost_id).status == "Dikembalikan" and db.get(Item, found_id).status == "Dikembalikan"
     detail = pemilik.get(f"/laporan/{lost_id}").text
     assert "081234567890" in detail and "Rahul" in detail
+    assert "Barangmu sudah ditemukan" in detail and "Ini laporan barangmu yang hilang" not in detail
 
 
 def test_klaim_ditolak_status_kembali():
@@ -367,3 +369,19 @@ def test_halaman_banding_dan_klaim_dari_situ():
     assert r.status_code == 303 and r.headers["location"] == f"/laporan/{lost_id}"
     with SessionLocal() as db:
         assert db.get(Item, found_id).status == "Diverifikasi"
+
+
+def test_kf05_format_dan_ukuran_foto():
+    """KF-05: JPG di bawah 5 MB diterima; PNG lebih dari 5 MB dan PDF ditolak dengan pesan."""
+    import os
+    c = akun("Ukuran", "ukuran@test.id")
+    data = {"jenis": "hilang", "kategori": "Tas", "lokasi": "Stasiun"}
+    r = c.post("/laporan", data=data, files={"foto": ("kecil.jpg", foto((30, 30, 30)), "image/jpeg")})
+    assert r.status_code == 303
+    besar = io.BytesIO()
+    Image.frombytes("RGB", (1500, 1500), os.urandom(1500 * 1500 * 3)).save(besar, "PNG")  # derau acak: PNG > 5 MB
+    assert besar.tell() > 5 * 1024 * 1024
+    r = c.post("/laporan", data=data, files={"foto": ("besar.png", besar.getvalue(), "image/png")})
+    assert r.status_code == 400 and "lebih dari batas 5 MB" in r.text
+    r = c.post("/laporan", data=data, files={"foto": ("dokumen.pdf", b"%PDF-1.4 bukan foto", "application/pdf")})
+    assert r.status_code == 400 and "bukan format foto yang didukung" in r.text
